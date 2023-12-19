@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   Int  @id @default(autoincrement())
+  firstname            String
+  lastname             String 
+  phone                String @unique()
+  email                String @unique() 
+  password             String 
+  avatar               String?
+  role                 UserRole 
+  frogotPasswordToken  String?  
+  frogotPasswordExpiry DateTime?
+  doctor               Doctor? 
+  patient              Patient?
+}
+
+enum UserRole {
+  PATIENT 
+  DOCTOR 
+}
+
+model Doctor {
+  id               Int  @id @default(autoincrement())  
+  specializations  String[]
+  qualification    String[]
+  waitTime         String
+  experience       Int
+  services         String[]
+  languages        String[]
+  availability     Boolean
+  memberships      String[]
+  about            String
+  userId           Int @unique
+  user             User @relation(fields: [userId], references: [id])
+  appointments     Appointment[]
+}
+
+model Patient {
+  id           Int  @id @default(autoincrement())
+  contact      String
+  dateOfBirth  DateTime
+  userId       Int @unique
+  user         User @relation(fields: [userId], references: [id])
+  appointments Appointment[]
+}
+
+model Appointment {
+  id        Int            @id @default(autoincrement())
+  doctor    Doctor            @relation(fields: [doctorId], references: [id])
+  doctorId  Int @unique()
+  patient   Patient           @relation(fields: [patientId], references: [id])
+  patientId Int @unique()
+  date      DateTime
+  status    AppointmentStatus
+  duration  Int
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELED
+}

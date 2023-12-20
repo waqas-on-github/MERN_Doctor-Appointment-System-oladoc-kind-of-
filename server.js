@@ -13,6 +13,7 @@ import { router as indexRouter } from './routes/index.js'
 import { router as userRouter } from './routes/user.route.js'
 // create the express app
 const app = express()
+// const csrfProtection = csurf({ cookie: true });
 
 
 app.use(logger('dev'))
@@ -23,6 +24,7 @@ app.use(
     path.join(path.dirname(fileURLToPath(import.meta.url)), 'public')
   )
 )
+// app.use(csrfProtection)
 
 // mount imported routes
 app.use('/', indexRouter)

@@ -10,7 +10,8 @@ import { cookieOptions } from "./cookieOptions.js";
 
 const createAccount = asyncHandler(async (req, res) => {
   
-
+  const file = req?.file;
+  // todo do this error handling after  implementing front end avatar upload feature 
   // input validation
   const { error } = userschemaforCreateAccount.validate(req.body);
    // if we git error 
@@ -37,7 +38,7 @@ const createAccount = asyncHandler(async (req, res) => {
 });
 
 // create/register user in database
-const createUserInDatabase = asyncHandler( async(userData, hashedPassword) =>{
+const createUserInDatabase =  async(userData, hashedPassword) =>{
   const createdUser = await Prisma.user.create({
     data: { ...userData, password: hashedPassword },
   });
@@ -51,18 +52,18 @@ const createUserInDatabase = asyncHandler( async(userData, hashedPassword) =>{
   }
 
   return createdUser;
-})
+}
 // delete user from database
- const  deleteUserInDatabase = asyncHandler( async (userId) =>  {
+ const  deleteUserInDatabase =  async (userId) =>  {
   const deleteUser = await Prisma.user.delete({
     where: { id: userId },
   });
 
   return deleteUser;
-})
+}
 
 // check dose user exits in db records 
-const  CheckUserExists =  asyncHandler (async(email) =>  {
+const  CheckUserExists =  async(email) =>  {
   const DoseExists = await Prisma.user.findUnique({
     where: { email: email },
   });
@@ -70,7 +71,7 @@ const  CheckUserExists =  asyncHandler (async(email) =>  {
   if (DoseExists) throw new CustomError("user already registerd", 401);
 
   return DoseExists;
-})
+}
 
 
 //senitize data 
@@ -90,22 +91,30 @@ const sanitizeData = (data) => {
 
 
 async function generateAndSetToken(res, user) {
+
   try {
     const token = await generateAccessToken(user);
        // set toekn into cookies
       res.cookie("token", token, cookieOptions);
       // if request if coming from mobile app
       res.header("Authorization", `Bearer ${token}`);
-    return token;
+      return token;
+
   } catch (error) {
+
     console.error("Token generation failed:", error);
-    throw new CustomError("User registration failed. Please try again later.", 500, "Token generation error");
+
+    await deleteUserInDatabase(user?.id)
+
+    throw new CustomError("User registration failed. Please try again later.",
+                           500,
+                          "Token generation error"
+                          );
   }
 }
 
 
 export { createAccount, deleteUserInDatabase, createUserInDatabase , CheckUserExists , sanitizeData ,generateAndSetToken};
-/// things to do 
-//1 refreash token 
+
 
 

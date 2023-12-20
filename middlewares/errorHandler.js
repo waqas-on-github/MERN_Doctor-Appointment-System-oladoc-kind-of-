@@ -13,7 +13,6 @@ const errorHandler = (err, req, res, next) => {
   }
 
   if (err) {
-    console.log(err);
     if (
       err.name === "PrismaClientKnownRequestError" || 
       err.name === "NotFoundError"
@@ -27,6 +26,15 @@ const errorHandler = (err, req, res, next) => {
       });
     }
      
+    if (err instanceof MulterError) {
+      res.status(400).json({ 
+        success : false ,
+        message: "File upload error by multer" ,
+        error : err.message,
+        stack : err.stack
+       });
+        
+    }
     // console.log(err.stack);
     return res.status(err?.code || 500).json({
       sucess: false,

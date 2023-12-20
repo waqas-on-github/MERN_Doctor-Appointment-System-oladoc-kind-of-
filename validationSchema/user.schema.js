@@ -4,6 +4,7 @@ const userschemaforCreateAccount = Joi.object({
    
     firstname             : Joi.string().required(),
     lastname              : Joi.string().required(),
+    username              : Joi.string().required(),
     phone                 : Joi.string().required(),
     email                 : Joi.string().required(),
     password              : Joi.string().required().min(8),
@@ -33,10 +34,8 @@ const userschemaforUpdateProfile = Joi.object({
 const userIdSchema = Joi.number().integer().required();
 
 
-
-
-
-
 export {
-    userschemaforCreateAccount, userschemaforUpdateProfile , userIdSchema
+    userschemaforCreateAccount,
+    userschemaforUpdateProfile,
+    userIdSchema
 }

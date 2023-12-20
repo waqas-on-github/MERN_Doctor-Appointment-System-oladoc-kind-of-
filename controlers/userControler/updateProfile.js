@@ -8,6 +8,9 @@ import { validateId } from "./deleteOne.js";
 
 
 const updateProfile = asyncHandler(async(req, res) => {
+
+   const file = req?.file 
+  // todo do this error handling after  implementing front end avatar upload feature 
    const {id} = req.params
    // validate user id 
    await validateId(id)
@@ -15,12 +18,11 @@ const updateProfile = asyncHandler(async(req, res) => {
    const {error} = userschemaforUpdateProfile.validate(req.body) 
    if(error) throw new CustomError(error.message , error.code  , error.stack)
    // senitize data 
-   const senitizedData =  sanitizeData(req.body) 
+   const senitizedData = sanitizeData(req.body) 
    //check user exist or not 
    await checkUserExistsById(id)
    // update user profile 
    const updated = await updateProfileById(senitizedData , id) 
-
    // send back responce on successfull update 
    res.status(201).json({ 
       success : true ,
@@ -59,9 +61,8 @@ const updateProfileById = asyncHandler(async(data , userId ) => {
 })
 
 
-
-
 export  {
    updateProfile ,
-   checkUserExistsById, updateProfileById
+   checkUserExistsById, 
+   updateProfileById
 }

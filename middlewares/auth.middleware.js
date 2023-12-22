@@ -1,8 +1,7 @@
 import JWT from 'jsonwebtoken';
 import CustomError from  '../utils/CustomError.js'
 import asyncHandler from '../utils/asyncHandler.js';
-import { User } from '../models/user.model.js';
-
+import { getOneUser } from '../controlers/userControler/getProfile.js';
 
 export const isLoggendIn =   asyncHandler (async (req, res, next) =>{
     // 1 check if user has token 
@@ -12,28 +11,31 @@ export const isLoggendIn =   asyncHandler (async (req, res, next) =>{
     let token;
   
      
-    if (req?.cookies?.token || (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) ) {
-        token = req.cookies.token || req.headers.authorization.split(" ")[1]
+    if (req?.cookies?.AccessToken || (req.headers.Authorization && req.headers.Authorization.startsWith("Bearer")) ) {
+        token = req.cookies.AccessToken || req.headers.Authorization.split(" ")[1]
         
         // token = "Bearer gbhnjm235r5hbnj"
     }
-
-    if (!token) {
-        throw new CustomError("Not authorized to access this resource", 401)
-    }
+   
+     if (!token) {
+         throw new CustomError("Not authorized to access this resource", 401)
+     }
 
     
-        const decodedJwtPayload = JWT.verify(token, process.env.SECRET);
-
-         req.user = await User.findById(decodedJwtPayload._id, "name email role")
+        const decodedJwtPayload = JWT.verify(token, process.env.ACCESS_SECRET);
+        // console.log("data in auth middleware ==============================");
+        // console.log(decodedJwtPayload .data?.id );
+        // console.log("data in auth middleware ==============================");
+        if(!decodedJwtPayload) throw new CustomError("token is invalid or can not be decoded")
+         req.user = await getOneUser(decodedJwtPayload.data?.id)
     
 
-         next()
-        if(!req.user) {
-            throw new CustomError("Not authorized to access this resource", 401)
-        }
+         if(!req.user) {
+             throw new CustomError("Not authorized to access this resource", 401)
+            }
+
+            next()
     
-    console.log(req.cookies);
 
 
 
@@ -61,3 +63,4 @@ export const authorize = (...requiredRoles) => {
 
 
     
+

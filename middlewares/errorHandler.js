@@ -1,4 +1,5 @@
 import CustomError from "../utils/CustomError.js";
+import { MulterError } from "multer";
 
 const errorHandler = (err, req, res, next) => {
   console.error('Error message:', err.message); // Log the error message

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import createError from 'http-errors'
 import logger from 'morgan'
 import { errorHandler } from './middlewares/errorHandler.js'
+import cookieParser from 'cookie-parser'
 
 
 // import routers
@@ -18,6 +19,7 @@ const app = express()
 
 app.use(logger('dev'))
 app.use(express.json())
+app.use(cookieParser())
 app.use(express.urlencoded({ extended: false }))
 app.use(
   express.static(

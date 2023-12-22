@@ -16,11 +16,12 @@ model User {
   email                String @unique() 
   password             String 
   avatar               String?
+  refreshToken         String?  
   role                 UserRole 
   frogotPasswordToken  String?  
   frogotPasswordExpiry DateTime?
-  doctor               Doctor? 
-  patient              Patient?
+  doctor              Doctor? 
+  patient              Patient? 
 }
 
 enum UserRole {
@@ -69,3 +70,6 @@ enum AppointmentStatus {
   COMPLETED
   CANCELED
 }
+
+
+

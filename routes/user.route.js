@@ -7,17 +7,22 @@ import { login } from "../controlers/userControler/login.js";
 import { logout } from "../controlers/userControler/logout.js";
 import { updateProfile } from "../controlers/userControler/updateProfile.js";
 import { upload } from "../services/multerService.js";
+import { limiter } from "../middlewares/rateLimiter.js";
+import {isLoggendIn } from "../middlewares/auth.middleware.js";
+import { refreshAccessToken } from "../controlers/userControler/refreshAccesstoken.js";
+
 
 
 const router = Router() 
 
-router.post("/new" , upload.single("avatar") ,createAccount)
-router.get("/profiles" , getProfiles)
+router.post("/new"  ,createAccount)
+router.get("/profiles" ,   getProfiles)
 router.delete("/delete/all" , deleteProfiles)
 router.delete("/delete/:id" , deleteOne)
-router.post("/login" , login)
-router.get("/logout" , logout)
-router.post("update/:id" , upload.single("avatar") , updateProfile)
+router.post("/login" , limiter , login) // rate limit on more then 50 request per 15 minuts on this route
+router.get("/logout" , isLoggendIn,logout)
+router.post("update/:id", updateProfile)
+router.post("/refresh" , refreshAccessToken)
 
 export {
     router
@@ -25,11 +30,11 @@ export {
 
 // todo featurs  
 // round #1 
-// 1 add avatar feature  // wroked on backend end and  waitng for fully implement on front end 
-// 2 add refreash token
-// 3 add email verification 
-// 4 add forgot and reset passaword feature 
-// round #2 
+// 1 add avatar feature  // wroked on backend end and  waitng for fully implemented on front end 
+// 2 add refreash token   // day 02 
+// 3 add email verification // day 02 also  
+// 4 add forgot and reset passaword feature  day 03 
+// round #2 // in next phase 
 // 5 add otp verification 
 // 6 add social auth oauth using passport.js
 // 7 Account Deactivation feature // or banning 

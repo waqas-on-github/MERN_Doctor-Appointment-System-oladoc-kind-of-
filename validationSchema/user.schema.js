@@ -34,8 +34,16 @@ const userschemaforUpdateProfile = Joi.object({
 const userIdSchema = Joi.number().integer().required();
 
 
+const userLoginSchema = Joi.object({
+    username : Joi.string(),
+    email: Joi.string(),
+    password: Joi.string().required(),
+  }).xor('username', 'email')
+
+
 export {
     userschemaforCreateAccount,
     userschemaforUpdateProfile,
-    userIdSchema
+    userIdSchema, 
+    userLoginSchema
 }

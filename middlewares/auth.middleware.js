@@ -11,7 +11,7 @@ export const isLoggendIn =   asyncHandler (async (req, res, next) =>{
     let token;
   
      
-    if (req?.cookies?.AccessToken || (req.headers.Authorization && req.headers.Authorization.startsWith("Bearer")) ) {
+    if (req.cookies.AccessToken || (req.headers.Authorization && req.headers.Authorization.startsWith("Bearer")) ) {
         token = req.cookies.AccessToken || req.headers.Authorization.split(" ")[1]
         
         // token = "Bearer gbhnjm235r5hbnj"
@@ -27,7 +27,7 @@ export const isLoggendIn =   asyncHandler (async (req, res, next) =>{
         // console.log(decodedJwtPayload .data?.id );
         // console.log("data in auth middleware ==============================");
         if(!decodedJwtPayload) throw new CustomError("token is invalid or can not be decoded")
-         req.user = await getOneUser(decodedJwtPayload.data?.id)
+         req.user = await getOneUser(decodedJwtPayload.data.id)
     
 
          if(!req.user) {
@@ -51,7 +51,7 @@ export const authorize = (...requiredRoles) => {
 
          return res.json({
            sucess : false ,
-           error : ` ${req?.user?.role} are not allowed to access this resource`
+           error : ` ${req.user?.role} are not allowed to access this resource`
           }
           )}
 

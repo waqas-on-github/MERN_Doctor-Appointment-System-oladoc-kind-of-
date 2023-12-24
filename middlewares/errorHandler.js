@@ -37,7 +37,7 @@ const errorHandler = (err, req, res, next) => {
         
     }
     // console.log(err.stack);
-    return res.status(err?.code || 500).json({
+    return res.status(err.code || 500).json({
       sucess: false,
       error: err.message,
       stack: err.stack,

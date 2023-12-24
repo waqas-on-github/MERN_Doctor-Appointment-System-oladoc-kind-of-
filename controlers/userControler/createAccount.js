@@ -2,14 +2,13 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
 import bcrypt from "bcryptjs";
 import { userschemaforCreateAccount } from "../../validationSchema/user.schema.js";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "../../utils/generatejwt.js";
 import Prisma from "../../prisma.js";
 import sanitizeHtml from "sanitize-html";
-import { cookieOptions } from "./cookieOptions.js";
+import {mailHelper} from '../../services/mailHelper.js'
 import { uploadSingle } from "../../services/uploadservice.js";
+import { generateVerificationToken } from "../../utils/generatejwt.js";
+import  Jwt  from "jsonwebtoken"
+
 
 const createAccount = asyncHandler(async (req, res) => {
   // input validation
@@ -21,25 +20,23 @@ const createAccount = asyncHandler(async (req, res) => {
   // upload image on cloudnairy
   // const result = await uploadSingle(req,res) // will be uncomented later
   //senitize incoming data
-  const senitizedata = sanitizeData(req.body); // avatar url will be added after frontend implementation
+  const senitizeData = sanitizeData(req.body); // avatar url will be added after frontend implementation
   // checking user existance in db records
-  const DoseExists = await CheckUserExists(senitizedata.email);
+  const DoseExists = await CheckUserExists(senitizeData.email);
 
   if (DoseExists) throw new CustomError("user already registerd", 401);
 
   // call create user funcation
-  const createdUser = await createUserInDatabase(senitizedata, hashPass);
+  const createdUser = await createUserInDatabase(senitizeData, hashPass);
   // generate and  set token
-  const {AccessToken, RefreshToken} = await generateAndSetAccessAndRefreshTokens(res, createdUser ,"createUser");
-  // saved genereted refresh token into db
-  const updatedUser = await saveRefreshTokenInToDb( createdUser?.id,RefreshToken,"saved");
   //for saftey
-  updatedUser.password = undefined;
+  createdUser.password = undefined;
+  // send verification email to user 
+   await sendVerificationEmail(createdUser , req)
   // send response on successfull user creation
   res.status(201).json({
     success: true,
-    user: updatedUser,
-    tokens: { AccessToken, RefreshToken },
+    user: createdUser,
   });
 });
 
@@ -60,14 +57,6 @@ const createUserInDatabase = async (userData, hashedPassword) => {
   return createdUser;
 };
 
-// delete user from database
-const deleteUserInDatabase = async (userId) => {
-  const deleteUser = await Prisma.user.delete({
-    where: { id: userId },
-  });
-
-  return deleteUser;
-};
 
 // check dose user exits in db records
 const CheckUserExists = async (email) => {
@@ -91,73 +80,44 @@ const sanitizeData = (data) => {
   return sanitizedData;
 };
 
-// generate tokens set cookies  and save into db
-async function generateAndSetAccessAndRefreshTokens(res, user , callContext) {
+const sendVerificationEmail = async(userInfo , req) => {
+
+  // const {emailVerificatioToken} = await generateVerificationToken(userInfo)
+  const emailVerificatioToken = Jwt.sign( userInfo , process.env.EMAIL_VERIFICATION_SECRET , {expiresIn : "10m"})
+
+  console.log(emailVerificatioToken);
+
+  if(!emailVerificatioToken) throw new CustomError("trouble getting verification token" , 401 , "line 154 createAccount")
+
+  const emailVerificationUrl = `${req?.protocol}://${req?.get("host")}/api/v1/user/verify/${emailVerificatioToken}`
+
+
+  const message = `your verfiy you account url us as folows  click on it and verify your account \n\n\n\n\ ${emailVerificationUrl}\n\n\n\n\   if this is not requseted by you please ignore`
+
   try {
-    const AccessToken = await generateAccessToken(user);
-    const RefreshToken = await generateRefreshToken(user);
+    
+   
+   await mailHelper({ 
+     email : userInfo?.email , 
+     subject :" Account Verification request" , 
+     text:  message
+    })
 
-    //  save Refresh Token into user model
 
-    // set tokens into cookies
-    res.cookie("AccessToken", AccessToken, cookieOptions);
-    res.cookie("RefreshToken", RefreshToken, cookieOptions);
-
-    // if request if coming from mobile app
-    res.header("Authorization", `Bearer ${AccessToken}`);
-    res.header("Authorization", `Bearer ${RefreshToken}`);
-
-    return { AccessToken, RefreshToken};
   } catch (error) {
+    console.log(error);
+     
+   throw new CustomError(error || "Email could not be sent", 500 , error.stack  )
 
-    if(callContext==="createUser"){
-      await deleteUserInDatabase(user?.id);
-    }
 
-    throw new CustomError(
-      error.message || "User registration failed. Please try again later",
-      500,
-      "Token generation error"
-    );
   }
+
 }
-
-// save refresh token into db
-const saveRefreshTokenInToDb = async (
-  userId,
-  RefreshToken,
-  CustomErrorMessage
-) => {
-  try {
-    var updatedUser = await Prisma.user.update({
-      where: { id: Number(userId) },
-      data: { refreshToken: RefreshToken },
-    });
-    if (!updatedUser)
-      throw new CustomError(
-        `error while ${CustomErrorMessage} refreshtoken in database`,
-        500,
-        "line 137 create user controler"
-      );
-  } catch (error) {
-    throw new CustomError(
-      error.message ||
-        `error while ${CustomErrorMessage} refreshtoken in database`,
-      500,
-      "line 137 create user controler"
-    );
-  }
-  return updatedUser;
-};
-
-
 
 export {
   createAccount,
-  deleteUserInDatabase,
   createUserInDatabase,
   CheckUserExists,
   sanitizeData,
-  generateAndSetAccessAndRefreshTokens,
-  saveRefreshTokenInToDb as updateRefreshTokenInDb,
+  sendVerificationEmail
 };

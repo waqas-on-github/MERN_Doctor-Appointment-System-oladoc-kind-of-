@@ -1,11 +1,12 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
-import Joi from "joi";
 import bcrypt from "bcryptjs";
 import {sanitizeData }from "./createAccount.js"
 import { CheckUserExists } from "./createAccount.js";
-import { generateAndSetAccessAndRefreshTokens } from "./createAccount.js";
 import { userLoginSchema } from "../../validationSchema/user.schema.js";
+import { generateAccessToken ,  generateRefreshToken } from "../../utils/generatejwt.js";
+import { cookieOptions } from "../../utils/cookiesOptions.js";
+import Prisma from "../../prisma.js";
 
 
 const login = asyncHandler(async (req, res) => {
@@ -21,30 +22,82 @@ const login = asyncHandler(async (req, res) => {
   //throw error if user not found 
   if (!User)
     throw new CustomError( "you entered wrong email ",400,"log in func line 41");
-
-  const checkpass = await bcrypt.compare(senitizedata.password, User?.password);
+// compare password 
+  const checkpass = await bcrypt.compare(senitizedata.password, User.password);
 
   if (!checkpass) throw new CustomError("you enterd wrong password", 401);
 
-  if (checkpass) {
-    var {AccessToken , RefreshToken} = await generateAndSetAccessAndRefreshTokens(res, User)
+  // geenerate and set tokens 
+  const {accessToken , refreshToken} = await generateAndSetAccessAndRefreshTokens(res, User)
 
-    }
+   if(accessToken && refreshToken) {
+     var updatedUser = await updateAnyFieldInDb(User.id ,{refreshToken : refreshToken} ,"updating")
+   }
+ // for safty
+ updatedUser.password = undefined
 
 
   res.status(200).json({
     success: true,
-    data: {
-      id : User.id,
-      name: User.name,
-      email: User.email,
-      loggedIn: true,
-      tokens : {AccessToken, RefreshToken} 
-    },
+     data :  updatedUser
   });
 });
 
 
+// generate and set tokens 
+async function generateAndSetAccessAndRefreshTokens(res, user ) {
+  try {
+    const accessToken = await generateAccessToken(user);
+    const refreshToken = await generateRefreshToken(user);
+
+    // set tokens into cookies
+    res.cookie("AccessToken", accessToken, cookieOptions);
+    res.cookie("RefreshToken", refreshToken, cookieOptions);
+
+    // if request if coming from mobile app
+    res.header("Authorization", `Bearer ${accessToken}`);
+    res.header("Authorization", `Bearer ${refreshToken}`);
+
+    return { accessToken, refreshToken};
+  } catch (error) {
+
+    throw new CustomError(
+      error.message || "User registration failed. Please try again later",
+      500,
+      "Token generation error"
+    );
+  }
+}
+
+// update refresh token
+const updateAnyFieldInDb = async (userId,updateObject ,CustomErrorMessage) => {
+  console.log({...updateObject});
+
+  try {
+    var updatedUser = await Prisma.user.update({
+      where: { id: Number(userId) },
+      data:  {...updateObject},
+    });
+    if (!updatedUser)
+      throw new CustomError(
+        `error while ${CustomErrorMessage} refreshtoken in database`,
+        500,
+        "line 137 create user controler"
+      );
+  } catch (error) {
+    throw new CustomError(
+      error.message ||
+        `error while ${CustomErrorMessage} refreshtoken in database`,
+      500,
+      "line 137 create user controler"
+    );
+  }
+  return updatedUser;
+};
+
+
 export {
-    login
+    login,
+    generateAndSetAccessAndRefreshTokens, 
+    updateAnyFieldInDb
 }

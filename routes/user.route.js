@@ -10,6 +10,7 @@ import { upload } from "../services/multerService.js";
 import { limiter } from "../middlewares/rateLimiter.js";
 import {isLoggendIn } from "../middlewares/auth.middleware.js";
 import { refreshAccessToken } from "../controlers/userControler/refreshAccesstoken.js";
+import { verifyEmail } from "../controlers/userControler/verifyEmail.js";
 
 
 
@@ -21,8 +22,9 @@ router.delete("/delete/all" , deleteProfiles)
 router.delete("/delete/:id" , deleteOne)
 router.post("/login" , limiter , login) // rate limit on more then 50 request per 15 minuts on this route
 router.get("/logout" , isLoggendIn,logout)
-router.post("update/:id", updateProfile)
+router.post("/update/:id", updateProfile)
 router.post("/refresh" , refreshAccessToken)
+router.post("/verify/:token" , verifyEmail)
 
 export {
     router

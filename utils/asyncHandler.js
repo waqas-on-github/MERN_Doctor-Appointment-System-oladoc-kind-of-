@@ -4,7 +4,7 @@ function asyncHandler (fun) {
             try {
                  await fun(req, res, next)
             } catch (error) {
-                console.log( "error name " , error.name);
+                console.log( "error name " , error);
                 next(error)
             }
         }

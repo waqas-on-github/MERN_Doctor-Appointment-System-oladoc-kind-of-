@@ -28,7 +28,6 @@ const getProfile = asyncHandler(async(req, res ) => {
 
 const getOneUser = async (userId) => { 
 
-
  const user = await Prisma.user.findUnique({
     where : {id :userId}
  }) 
@@ -39,12 +38,6 @@ const getOneUser = async (userId) => {
 
 
 }
-
-
-
-
-
-
 
 export {
     getProfile,

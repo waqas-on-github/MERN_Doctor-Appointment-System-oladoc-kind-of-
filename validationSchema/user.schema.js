@@ -19,6 +19,7 @@ const userschemaforUpdateProfile = Joi.object({
    
     firstname             : Joi.string(),
     lastname              : Joi.string(),
+    username              : Joi.string(),
     phone                 : Joi.string(),
     email                 : Joi.string(),
     password              : Joi.string().min(8),

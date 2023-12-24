@@ -8,20 +8,23 @@ datasource db {
 }
 
 model User {
-  id                   Int  @id @default(autoincrement())
-  firstname            String
-  lastname             String 
-  username             String @unique()
-  phone                String @unique()
-  email                String @unique() 
-  password             String 
-  avatar               String?
-  refreshToken         String?  
-  role                 UserRole 
-  frogotPasswordToken  String?  
-  frogotPasswordExpiry DateTime?
-  doctor              Doctor? 
-  patient              Patient? 
+  id                      Int  @id @default(autoincrement())
+  firstname               String
+  lastname                String 
+  username                String @unique()
+  phone                   String @unique()
+  email                   String @unique() 
+  password                String 
+  avatar                  String?
+  refreshToken            String?  
+  varificationToken       String? // scrurity reson if someone somehow  steel  
+  isVerfied               Boolean?
+  emailVarificationToken  DateTime?
+  role                    UserRole 
+  frogotPasswordToken     String?  
+  frogotPasswordExpiry    DateTime?
+  doctor                  Doctor? 
+  patient                 Patient? 
 }
 
 enum UserRole {

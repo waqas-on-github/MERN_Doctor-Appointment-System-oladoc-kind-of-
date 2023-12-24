@@ -1,5 +1,5 @@
 import asyncHandler from "../../utils/asyncHandler.js";
-import { updateRefreshTokenInDb } from "./createAccount.js";
+import { updateAnyFieldInDb } from "./login.js";
 
 const cookieoptionslogout = {
     httpOnly: true,
@@ -9,12 +9,12 @@ const cookieoptionslogout = {
 // user logout 
 const logout = asyncHandler(async (req, res) => {
 
-  const user = req?.user
+  const user = req.user
 // clear cookies first 
   res.cookie("AccessToken", null,  cookieoptionslogout);
   res.cookie("RefreshToken", null,  cookieoptionslogout);
 // delete refresh token from user table in db 
- const updateResult =   await  updateRefreshTokenInDb(user?.id , null , "updating/deleting")
+ const updateResult =   await  updateAnyFieldInDb(user.id , null , "updating/deleting")
 
   res.status(200).json({
     success: true,

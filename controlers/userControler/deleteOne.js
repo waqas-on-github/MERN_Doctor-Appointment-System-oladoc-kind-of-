@@ -1,17 +1,13 @@
 import CustomError from "../../utils/CustomError.js";
 import asyncHandler from "../../utils/asyncHandler.js";
-import { userIdSchema } from "../../validationSchema/user.schema.js";
 import Prisma from "../../prisma.js";
+import { validatePatientById } from "../pstirntControler/deletePatient.js";
 
 
 const deleteOne = asyncHandler(async (req, res) => {
-  // delete user account by id 
-  const { id } = req.params;
+     // validate id 
 
-  // validate user id 
-  const { error } = userIdSchema.validate(id);
-  if (error) throw new CustomError(error.message, error.code, error.stack);
-
+     const id = validatePatientById(req)
 
     // delete user 
     const deleted = await Prisma.user.delete({ 

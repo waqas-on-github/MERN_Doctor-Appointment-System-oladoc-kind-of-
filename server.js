@@ -12,6 +12,8 @@ import cookieParser from 'cookie-parser'
 // import routers
 import { router as indexRouter } from './routes/index.js'
 import { router as userRouter } from './routes/user.route.js'
+import {router as doctorRouter} from  './routes/doctor.route.js'
+import { router as patientRouter } from './routes/patient.route.js'
 // create the express app
 const app = express()
 // const csrfProtection = csurf({ cookie: true });
@@ -26,11 +28,13 @@ app.use(
     path.join(path.dirname(fileURLToPath(import.meta.url)), 'public')
   )
 )
-// app.use(csrfProtection)
 
 // mount imported routes
 app.use('/', indexRouter)
 app.use('/api/v1/user' , userRouter)
+app.use('/api/v1/doctor' , doctorRouter)
+app.use('/api/v1/patient' , patientRouter)
+
 
 
 // catch 404 and forward to error handler

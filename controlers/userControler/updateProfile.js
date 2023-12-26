@@ -3,7 +3,7 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
 import { userschemaforUpdateProfile } from "../../validationSchema/user.schema.js";
 import {sanitizeData} from './createAccount.js'
-import { userIdSchema } from "../../validationSchema/user.schema.js";
+import { idSchema } from "../../validationSchema/user.schema.js";
 
 
 const updateProfile = asyncHandler(async(req, res) => {
@@ -12,7 +12,7 @@ const updateProfile = asyncHandler(async(req, res) => {
   // todo do this error handling after  implementing front end avatar upload feature 
    const {id} =  req?.params
    // validate user id 
-   // await validateId(id)
+    await validateId(id)
    // validate user inputs 
    const {error} = userschemaforUpdateProfile.validate(req.body) 
    if(error) throw new CustomError(error?.message , error?.code  , error?.stack)
@@ -82,7 +82,7 @@ const validateId = async (userId) => {
 
    console.log(typeof(id));
 
-   const {error} = userIdSchema.validate(id)
+   const {error} = idSchema.validate(id)
    if(error) throw new CustomError(error.message , error.code , error.stack)
 
 

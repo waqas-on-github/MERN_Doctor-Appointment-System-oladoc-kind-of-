@@ -32,7 +32,7 @@ const createAccount = asyncHandler(async (req, res) => {
   //for saftey
   createdUser.password = undefined;
   // send verification email to user 
-   await sendVerificationEmail(createdUser , req)
+  //  await sendVerificationEmail(createdUser , req)  // will be implemented after getting free smtp server 
   // send response on successfull user creation
   res.status(201).json({
     success: true,

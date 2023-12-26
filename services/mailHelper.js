@@ -5,9 +5,9 @@ const mailHelper = async (option ) =>  {
 
   const message =  {
     from : process.env.MAIL_SENDER , 
-    // to : option?.email , 
-    // subject :  option?.subject , 
-    // text: option?.text
+    to : option?.email , 
+    subject :  option?.subject , 
+    text: option?.text
 
    }
 
@@ -16,7 +16,8 @@ const mailHelper = async (option ) =>  {
        await transporter.sendMail(message)
    } catch (error) {
     console.log(error);
-        throw new CustomError("mail sending failed " , 401 , "mailHelper line 18")
+
+        throw new CustomError( error , 401 , "mailHelper line 18")
    }
 
 

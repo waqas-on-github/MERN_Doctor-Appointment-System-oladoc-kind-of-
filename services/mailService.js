@@ -1,16 +1,17 @@
-import nodemailer from "nodemailer" 
+  import nodemailer from "nodemailer" 
 
-const transporter = nodemailer.createTransport({
-  host: process.env.HOST,
-  port: process.env.MAIL_PORT,
-  secure: true,
-  auth: {
-    // TODO: replace `user` and `pass` values from <https://forwardemail.net>
-    user: process.env.USER,
-    pass: process.env.PASS,
-  },
-});
-
-export {
-    transporter
-}
+  
+  
+  let transporter = nodemailer.createTransport({
+    host: "smtp-relay.brevo.com",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: "example@brevo.com", // generated ethereal user
+      pass: "xxxxxxxxx", // generated ethereal password
+    },
+  });
+  
+    export {
+      transporter
+    }

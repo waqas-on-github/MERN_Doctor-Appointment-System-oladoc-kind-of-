@@ -32,7 +32,7 @@ const userschemaforUpdateProfile = Joi.object({
 
 
 
-const userIdSchema = Joi.number().integer().required();
+const idSchema = Joi.number().integer().required();
 
 
 const userLoginSchema = Joi.object({
@@ -45,6 +45,6 @@ const userLoginSchema = Joi.object({
 export {
     userschemaforCreateAccount,
     userschemaforUpdateProfile,
-    userIdSchema, 
+    idSchema, 
     userLoginSchema
 }

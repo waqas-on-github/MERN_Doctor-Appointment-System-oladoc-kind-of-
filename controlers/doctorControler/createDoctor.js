@@ -3,6 +3,7 @@ import asyncHandler from '../../utils/asyncHandler.js'
 import CustomError from '../../utils/CustomError.js'
 import { createDoctorSchema } from "../../validationSchema/doctor.schema.js"
 import {sanitizeData} from "../userControler/createAccount.js"
+import { checkUserAndRole } from '../pstirntControler/createPatient.js'
 
 
 
@@ -10,14 +11,14 @@ import {sanitizeData} from "../userControler/createAccount.js"
 const createDoctor = asyncHandler(async(req, res ) => {
 
     // validate inputs 
-    //  const {error} = createDoctorSchema.validate(req.body)
+      const {error} = createDoctorSchema.validate(req.body)
 
-    //  if(error) throw new CustomError(error.message  , error.code || 401 , error.stack || "createDoctor line 14")
+      if(error) throw new CustomError(error.message  , error.code || 401 , error.stack || "createDoctor line 14")
 
     // sentize  incoming data  
-    // const senitizedData = sanitizeData(req.body)
+     const senitizedData = sanitizeData(req.body)
     // checking user and   user role(is doctor?) or not 
-    //  await checkIsUserDoctor(req.body.userId)
+      await checkUserAndRole(senitizedData.userId , "DOCTOR")
 
      // adding data recod into db 
     const doctorData =  await addDoctorDataInDb(req.body)
@@ -33,22 +34,6 @@ const createDoctor = asyncHandler(async(req, res ) => {
 
 
 
-const checkIsUserDoctor = async(userId) => {
-
-
-
- const isUserDoctor = await Prisma.user.findUnique({
-     where: {
-       id: userId,
-       role: "DOCTOR"
-     }
-   });
-  
- if(!isUserDoctor) throw new CustomError("user role must be doctor " , 401 , "line 38 createdoctor controler")
-
- return isUserDoctor
-
-}
 
 const addDoctorDataInDb = async(data) => {
 
@@ -64,5 +49,5 @@ return dbResponce
 
 
 export {
-    createDoctor , checkIsUserDoctor , addDoctorDataInDb
+    createDoctor ,   addDoctorDataInDb
 }

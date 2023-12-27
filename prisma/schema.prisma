@@ -33,16 +33,16 @@ enum UserRole {
 }
 
 model Doctor {
-  id               Int  @id @default(autoincrement())  
-  experience       Int
+   id               Int  @id @default(autoincrement())  
+   experience       Int
    specializations  String[]
-    qualification    String[]
-    waitTime         String
-    services         String[]
-    languages        String[]
-    availability     Boolean
-    memberships      String[]
-    about            String
+   qualification    String[]
+   waitTime         String
+   services         String[]
+   languages        String[]
+   availability     Boolean
+   memberships      String[]
+   about            String
    userId           Int @unique
    user             User @relation(fields: [userId], references: [id])
    appointments     Appointment[]

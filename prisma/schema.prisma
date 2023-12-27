@@ -33,20 +33,35 @@ enum UserRole {
 }
 
 model Doctor {
-   id               Int  @id @default(autoincrement())  
-   experience       Int
-   specializations  String[]
-   qualification    String[]
-   waitTime         String
-   services         String[]
-   languages        String[]
-   availability     Boolean
-   memberships      String[]
-   about            String
-   userId           Int @unique
-   user             User @relation(fields: [userId], references: [id])
-   appointments     Appointment[]
+   id                  Int  @id @default(autoincrement())  
+   experience          Int
+   specializations     String[]
+   qualification       String[]
+   waitTime            String
+   services            String[]
+   languages           String[]
+   availability        Boolean
+   availableInHrs      Int 
+   memberships         String[]
+   about               String
+   userId              Int @unique
+   user                User @relation(fields: [userId], references: [id])
+   appointments        Appointment[]
+   DoctorAvailability  TimeSlot?
+
 }
+
+model TimeSlot {
+  id       Int      @id @default(autoincrement())
+  doctor   Doctor  @relation(fields: [doctorId], references: [id])
+  doctorId Int     @unique()
+  days     String[]
+  startTime DateTime @unique()
+  endTime   DateTime
+  duration Int
+  recurring Boolean
+}
+
 
 model Patient {
   id           Int  @id @default(autoincrement())
@@ -60,15 +75,16 @@ model Patient {
 model Appointment {
   id        Int            @id @default(autoincrement())
   doctor    Doctor            @relation(fields: [doctorId], references: [id])
-  doctorId  Int @unique()
+  doctorId  Int 
   patient   Patient           @relation(fields: [patientId], references: [id])
-  patientId Int @unique()
-  date      DateTime
+  patientId Int 
+  date      DateTime  // date and time  for what appointment booked like 2jan 24 5:30pm to 5:50pm
   status    AppointmentStatus
-  duration  Int
+ 
 }
 
 enum AppointmentStatus {
+  PENDING
   SCHEDULED
   COMPLETED
   CANCELED

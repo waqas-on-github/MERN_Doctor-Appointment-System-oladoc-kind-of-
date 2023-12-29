@@ -8,13 +8,13 @@ datasource db {
 }
 
 model User {
-  id                      Int  @id @default(autoincrement())
+  id                      Int     @id @default(autoincrement())
   firstname               String
   lastname                String 
-  username                String @unique()
-  phone                   String @unique()
-  email                   String @unique() 
-  password                String 
+  username                String  @unique()
+  phone                   String  @unique()
+  email                   String  @unique() 
+  password                String  
   avatar                  String?
   refreshToken            String?  
   varificationToken       String? // scrurity reson if someone somehow  steel  
@@ -33,7 +33,7 @@ enum UserRole {
 }
 
 model Doctor {
-   id                  Int  @id @default(autoincrement())  
+   id                  Int         @id @default(autoincrement())  
    experience          Int
    specializations     String[]
    qualification       String[]
@@ -44,36 +44,36 @@ model Doctor {
    availableInHrs      Int 
    memberships         String[]
    about               String
-   userId              Int @unique
-   user                User @relation(fields: [userId], references: [id])
+   userId              Int        @unique
+   user                User       @relation(fields: [userId], references: [id])
    appointments        Appointment[]
    DoctorAvailability  TimeSlot?
 
 }
 
 model TimeSlot {
-  id       Int      @id @default(autoincrement())
-  doctor   Doctor  @relation(fields: [doctorId], references: [id])
-  doctorId Int     @unique()
-  days     String[]
-  startTime DateTime @unique()
-  endTime   DateTime
-  duration Int
-  recurring Boolean
+  id            Int        @id @default(autoincrement())
+  doctor        Doctor     @relation(fields: [doctorId], references: [id])
+  doctorId      Int        @unique()
+  days          String[]
+  startTime     DateTime   @unique()
+  endTime       DateTime
+  duration      Int
+  recurring     Boolean
 }
 
 
 model Patient {
-  id           Int  @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   contact      String
   dateOfBirth  DateTime
-  userId       Int @unique
-  user         User @relation(fields: [userId], references: [id])
+  userId       Int        @unique
+  user         User       @relation(fields: [userId], references: [id])
   appointments Appointment[]
 }
 
 model Appointment {
-  id        Int            @id @default(autoincrement())
+  id        Int               @id @default(autoincrement())
   doctor    Doctor            @relation(fields: [doctorId], references: [id])
   doctorId  Int 
   patient   Patient           @relation(fields: [patientId], references: [id])

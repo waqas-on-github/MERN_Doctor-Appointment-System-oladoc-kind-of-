@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { createPatient } from "../controlers/pstirntControler/createPatient.js";
-import { deleteOne } from "../controlers/pstirntControler/deletePatient.js";
-import { deletePatients } from "../controlers/pstirntControler/deleteAllPatient.js";
-import { allPatients } from "../controlers/pstirntControler/getAllPatients.js";
-import { getOnePatient, getOnePatientWithProfile } from "../controlers/pstirntControler/getOnePatient.js";
-import { updatePatient } from "../controlers/pstirntControler/updatePatinet.js";
+import { createPatient } from "../controlers/patientControler/createPatient.js";
+import { deleteOne } from "../controlers/patientControler/deletePatient.js";
+import { deletePatients } from "../controlers/patientControler/deleteAllPatient.js";
+import { allPatients } from "../controlers/patientControler/getAllPatients.js";
+import { getOnePatient, getOnePatientWithProfile } from "../controlers/patientControler/getOnePatient.js";
+import { updatePatient } from "../controlers/patientControler/updatePatinet.js";
 
 const router = Router() 
 

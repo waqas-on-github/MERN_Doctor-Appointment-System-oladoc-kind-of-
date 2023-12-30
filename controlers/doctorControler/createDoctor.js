@@ -3,7 +3,7 @@ import asyncHandler from '../../utils/asyncHandler.js'
 import CustomError from '../../utils/CustomError.js'
 import { createDoctorSchema } from "../../validationSchema/doctor.schema.js"
 import {sanitizeData} from "../userControler/createAccount.js"
-import { checkUserAndRole } from '../pstirntControler/createPatient.js'
+import { checkUserAndRole } from '../patientControler/createPatient.js'
 
 
 

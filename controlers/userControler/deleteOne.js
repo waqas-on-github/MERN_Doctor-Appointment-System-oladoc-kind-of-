@@ -1,7 +1,7 @@
 import CustomError from "../../utils/CustomError.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 import Prisma from "../../prisma.js";
-import { validatePatientById } from "../pstirntControler/deletePatient.js";
+import { validatePatientById } from "../patientControler/deletePatient.js";
 
 
 const deleteOne = asyncHandler(async (req, res) => {

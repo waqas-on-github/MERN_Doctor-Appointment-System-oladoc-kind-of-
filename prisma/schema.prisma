@@ -16,15 +16,24 @@ model User {
   email                   String  @unique() 
   password                String  
   avatar                  String?
-  refreshToken            String?  
-  varificationToken       String? // scrurity reson if someone somehow  steel  
   isVerfied               Boolean?
-  emailVarificationToken  DateTime?
   role                    UserRole 
-  frogotPasswordToken     String?  
-  frogotPasswordExpiry    DateTime?
   doctor                  Doctor? 
   patient                 Patient? 
+  token                   Tokens?
+}
+
+
+model Tokens {
+  id                      Int       @id @default(autoincrement())
+  userId                  Int       @unique()
+  user                    User      @relation(fields: [userId] , references: [id]) 
+  refreshToken            String?  
+  varificationToken       String?    // scrurity reson if someone somehow  steel  
+  emailVarificationToken  DateTime?
+  frogotPasswordToken     String?  
+  frogotPasswordExpiry    DateTime?
+
 }
 
 enum UserRole {
@@ -33,7 +42,7 @@ enum UserRole {
 }
 
 model Doctor {
-   id                  Int         @id @default(autoincrement())  
+   id                  Int           @id @default(autoincrement())  
    experience          Int
    specializations     String[]
    qualification       String[]
@@ -44,49 +53,63 @@ model Doctor {
    availableInHrs      Int 
    memberships         String[]
    about               String
-   userId              Int        @unique
-   user                User       @relation(fields: [userId], references: [id])
+   userId              Int           @unique
+   user                User          @relation(fields: [userId], references: [id])
    appointments        Appointment[]
    DoctorAvailability  TimeSlot?
 
 }
 
 model TimeSlot {
-  id            Int        @id @default(autoincrement())
-  doctor        Doctor     @relation(fields: [doctorId], references: [id])
-  doctorId      Int        @unique()
-  days          String[]
-  startTime     DateTime   @unique()
-  endTime       DateTime
-  duration      Int
-  recurring     Boolean
+  id                     Int        @id @default(autoincrement())
+  doctor                 Doctor     @relation(fields: [doctorId], references: [id])
+  doctorId               Int        @unique()
+  days                   String[]
+  startTime              DateTime    // doctor dutration start time like from 9:00 to 12:00 
+  endTime                DateTime
+  duration               Int   // full duriotion like 3 hrs 5 hr and so on 
+  appointmentDuration    Int    // one patient checking duration can be 20 minuts or maybe more 
+  recurring              Boolean
 }
 
 
 model Patient {
-  id           Int        @id @default(autoincrement())
-  contact      String
-  dateOfBirth  DateTime
-  userId       Int        @unique
-  user         User       @relation(fields: [userId], references: [id])
-  appointments Appointment[]
+  id              Int           @id @default(autoincrement())
+  contact         String
+  dateOfBirth     DateTime
+  userId          Int           @unique()
+  user            User          @relation(fields: [userId], references: [id])
+  appointments    Appointment[]
 }
 
 model Appointment {
-  id        Int               @id @default(autoincrement())
-  doctor    Doctor            @relation(fields: [doctorId], references: [id])
-  doctorId  Int 
-  patient   Patient           @relation(fields: [patientId], references: [id])
-  patientId Int 
-  date      DateTime  // date and time  for what appointment booked like 2jan 24 5:30pm to 5:50pm
-  status    AppointmentStatus
+  id                      Int               @id @default(autoincrement())
+  doctor                  Doctor            @relation(fields: [doctorId], references: [id])
+  doctorId                Int 
+  patient                 Patient           @relation(fields: [patientId], references: [id])
+  patientId               Int 
+  doseDoctorAccepted      Boolean?
+  date                    DateTime  // date and time  for what appointment booked like 2jan 24 5:30pm to 5:50pm
+  status                  AppointmentStatus
+  appointmentSlot         appointmentSlot?
  
+}
+
+model appointmentSlot {
+
+   id              Int          @id @default(autoincrement()) 
+   appointmentId   Int          @unique() // one booked appointment can have one time slot like 5:30 to 5:50
+   appointment     Appointment  @relation(fields: [appointmentId] , references: [id])
+   checkinTime     DateTime     // the time patient meant to start his checkup 
+   checkoutTime    DateTime     // the time patient ment to end his checkup 
+
+
 }
 
 enum AppointmentStatus {
   PENDING
   SCHEDULED
-  COMPLETED
+  FULLFILLED
   CANCELED
 }
 

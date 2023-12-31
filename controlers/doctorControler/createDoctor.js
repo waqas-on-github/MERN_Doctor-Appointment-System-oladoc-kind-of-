@@ -8,6 +8,7 @@ import { checkUserAndRole } from '../patientControler/createPatient.js'
 
 
 
+
 const createDoctor = asyncHandler(async(req, res ) => {
 
     // validate inputs 

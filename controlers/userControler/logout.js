@@ -1,5 +1,5 @@
+import Prisma from "../../prisma.js";
 import asyncHandler from "../../utils/asyncHandler.js";
-import { updateAnyFieldInDb } from "./login.js";
 
 const cookieoptionslogout = {
     httpOnly: true,
@@ -14,7 +14,7 @@ const logout = asyncHandler(async (req, res) => {
   res.cookie("AccessToken", null,  cookieoptionslogout);
   res.cookie("RefreshToken", null,  cookieoptionslogout);
 // delete refresh token from user table in db 
- const updateResult =   await  updateAnyFieldInDb(user.id , null , "updating/deleting")
+ const updateResult =   await  updateTokensTable(user.id , null )
 
   res.status(200).json({
     success: true,
@@ -23,6 +23,18 @@ const logout = asyncHandler(async (req, res) => {
   });
 });
 
+
+const updateTokensTable = async(tableId = null , userId = null , updateData = null) => {
+  // get tokens table accocated to this user 
+  const tokenTable = Prisma.tokens.findUnique({
+    where : {userId : userId}
+
+  })
+
+
+  console.log( tokenTable);
+
+}
 
 
 

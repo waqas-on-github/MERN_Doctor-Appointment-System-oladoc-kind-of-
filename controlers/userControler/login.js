@@ -31,7 +31,7 @@ const login = asyncHandler(async (req, res) => {
   const {accessToken , refreshToken} = await generateAndSetAccessAndRefreshTokens(res, User)
 
    if(accessToken && refreshToken) {
-     var updatedUser = await updateAnyFieldInDb(User.id ,{refreshToken : refreshToken} ,"updating")
+     var updatedUser = await addTokensInTokensTable(User.id ,{refreshToken : refreshToken} ,"addig")
    }
  // for safty
  updatedUser.password = undefined
@@ -69,16 +69,19 @@ async function generateAndSetAccessAndRefreshTokens(res, user ) {
   }
 }
 
-// update refresh token
-const updateAnyFieldInDb = async (userId,updateObject ,CustomErrorMessage) => {
+//  add refresh token in Token mode accociate with user  
+const addTokensInTokensTable = async (userId,updateObject ,CustomErrorMessage) => {
+
   console.log({...updateObject});
 
   try {
-    var updatedUser = await Prisma.user.update({
-      where: { id: Number(userId) },
-      data:  {...updateObject},
+    var addRefreshToken = await Prisma.tokens.create({
+      data : {
+        userId : userId , 
+        ...updateObject
+      }
     });
-    if (!updatedUser)
+    if (!addRefreshToken)
       throw new CustomError(
         `error while ${CustomErrorMessage} refreshtoken in database`,
         500,
@@ -92,12 +95,12 @@ const updateAnyFieldInDb = async (userId,updateObject ,CustomErrorMessage) => {
       "line 137 create user controler"
     );
   }
-  return updatedUser;
+  return addRefreshToken;
 };
 
 
 export {
     login,
     generateAndSetAccessAndRefreshTokens, 
-    updateAnyFieldInDb
+    addTokensInTokensTable
 }

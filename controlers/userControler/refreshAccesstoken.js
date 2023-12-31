@@ -2,7 +2,7 @@ import Prisma from "../../prisma.js";
 import CustomError from "../../utils/CustomError.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 import JWT from 'jsonwebtoken';
-import { generateAndSetAccessAndRefreshTokens ,updateAnyFieldInDb } from "./login.js";
+import { generateAndSetAccessAndRefreshTokens  } from "./login.js"; // addanyfieldindb is removed from here debug code soon
 
 
 
@@ -32,7 +32,7 @@ const refreshAccessToken = asyncHandler( async(req, res) => {
    // generate access token and set in cookies 
    const { AccessToken, RefreshToken } =await generateAndSetAccessAndRefreshTokens(res, refreashTokFromDb ,"rfreshToken");
    
-     await updateAnyFieldInDb(refreashTokFromDb?.id,{ refreshToken: RefreshToken},"saved");
+   //   await updateAnyFieldInDb(refreashTokFromDb?.id,{ refreshToken: RefreshToken},"saved");
 
      res.status(200).json({
         success : true ,

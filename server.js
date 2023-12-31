@@ -16,6 +16,7 @@ import { router as doctorRouter} from  './routes/doctor.route.js'
 import { router as patientRouter } from './routes/patient.route.js'
 import { router  as appointmentRouter } from './routes/appointment.route.js'
 import { router as timeSlotRouter } from './routes/timeSlot.route.js'
+import { router as tokenRouter } from './routes/token.route.js'
 
 // create the express app
 const app = express()
@@ -39,7 +40,7 @@ app.use('/api/v1/doctor' , doctorRouter)
 app.use('/api/v1/patient' , patientRouter)
 app.use('/api/v1/appointment' , appointmentRouter)
 app.use('/api/v1/slot' , timeSlotRouter)
-
+app.use('/api/v1/token', tokenRouter)
 
 
 

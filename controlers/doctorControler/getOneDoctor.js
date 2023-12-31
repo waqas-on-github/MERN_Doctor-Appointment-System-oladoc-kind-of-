@@ -26,6 +26,7 @@ const getDoctor = async (doctroId) => {
 };
 
 const validateById = (req) => {
+
   const { id } = req.params;
   // error handling
   const { error } = idSchema.validate(id);

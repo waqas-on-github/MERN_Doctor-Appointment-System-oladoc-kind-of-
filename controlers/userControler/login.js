@@ -31,18 +31,24 @@ const login = asyncHandler(async (req, res) => {
   const {accessToken , refreshToken} = await generateAndSetAccessAndRefreshTokens(res, User)
 
    if(accessToken && refreshToken) {
-     var updatedUser = await addTokensInTokensTable(User.id ,{refreshToken : refreshToken} ,"addig")
+     var tokenAdded = await addTokensInTokensTable(User.id ,{refreshToken : refreshToken} ,"addig")
    }
+      
+   if(tokenAdded) {
+    var updateUser = await Prisma.user.findUnique({
+      where : {id : parseInt(User.id)},
+      // include : {token : true }
+    })  
+   }
+   
  // for safty
- updatedUser.password = undefined
-
+  updateUser.password = undefined
 
   res.status(200).json({
     success: true,
-     data :  updatedUser
+    updateUser : updateUser
   });
 });
-
 
 // generate and set tokens 
 async function generateAndSetAccessAndRefreshTokens(res, user ) {
@@ -72,29 +78,20 @@ async function generateAndSetAccessAndRefreshTokens(res, user ) {
 //  add refresh token in Token mode accociate with user  
 const addTokensInTokensTable = async (userId,updateObject ,CustomErrorMessage) => {
 
-  console.log({...updateObject});
-
-  try {
-    var addRefreshToken = await Prisma.tokens.create({
-      data : {
-        userId : userId , 
-        ...updateObject
-      }
+    // if token table exists updated it if not create one 
+    var addRefreshToken = await Prisma.tokens.upsert({
+      where : {userId : parseInt(userId)} , 
+       update : {...updateObject},
+       create : { ...updateObject , userId : userId}
     });
+
     if (!addRefreshToken)
       throw new CustomError(
         `error while ${CustomErrorMessage} refreshtoken in database`,
         500,
         "line 137 create user controler"
       );
-  } catch (error) {
-    throw new CustomError(
-      error.message ||
-        `error while ${CustomErrorMessage} refreshtoken in database`,
-      500,
-      "line 137 create user controler"
-    );
-  }
+
   return addRefreshToken;
 };
 

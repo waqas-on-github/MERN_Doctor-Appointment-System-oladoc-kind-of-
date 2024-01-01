@@ -38,6 +38,7 @@ const getSlot = async (slotId , doctorId) => {
    }
 
    if(doctorId) {
+    
     slot = await Prisma.timeSlot.findUnique({
         where : {doctorId :  parseInt(doctorId) }
     })

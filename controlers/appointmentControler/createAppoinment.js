@@ -5,6 +5,7 @@ import { appointmentSchema } from '../../validationSchema/appointment.schema.js'
 import {sanitizeData} from '../userControler/createAccount.js'
 import { getSlot } from '../TimeSlot/getOneSlots.js'
 import { getDoctor } from '../doctorControler/getOneDoctor.js'
+import { isWeekend } from 'date-fns'
 
 
 const createAppoinmet = asyncHandler(async(req, res) => {
@@ -49,6 +50,7 @@ const isDoctorAvailableToday = async (doctorId) => {
     // get slot id form doctor id 
     const slot = await getSlot( null , doctorId)
    
+    
     // check is today is weekday or not 
     // if now weekday then check number of available slot for this doctor 
     // if slot is availabe check is slot booked already for this time or not 

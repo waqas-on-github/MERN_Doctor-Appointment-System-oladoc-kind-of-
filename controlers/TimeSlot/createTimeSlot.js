@@ -3,11 +3,16 @@ import CustomError from "../../utils/CustomError.js";
 import Prisma from "../../prisma.js";
 import { slotSchema } from "../../validationSchema/slot.Schema.js";
 import { sanitizeData } from "../userControler/createAccount.js";
+import {  format , addHours} from 'date-fns';
+
 
 
 
 const createSlot = asyncHandler(async(req, res) => {
  console.log(req.body);
+ const formattedTime24 = format(new Date(), 'yyyy-MM-ddTHH:mm:ssZ');
+ console.log(formattedTime24);
+
     // validate inputs 
     const {error} = slotSchema.validate(req.body)
     if(error) throw new CustomError(error.message , error.code || 401 , error.stack)

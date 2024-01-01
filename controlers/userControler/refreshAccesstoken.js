@@ -2,7 +2,7 @@ import Prisma from "../../prisma.js";
 import CustomError from "../../utils/CustomError.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 import JWT from 'jsonwebtoken';
-import { generateAndSetAccessAndRefreshTokens  } from "./login.js"; // addanyfieldindb is removed from here debug code soon
+import { generateAndSetAccessAndRefreshTokens  , addTokensInTokensTable } from "./login.js"; // addanyfieldindb is removed from here debug code soon
 
 
 
@@ -30,13 +30,13 @@ const refreshAccessToken = asyncHandler( async(req, res) => {
    if(incomingRefreshToken !== refreashTokFromDb?.refreshToken) throw new CustomError("token comparision failed " ,400 ,"line 31 refreshAccessToken controler")
 
    // generate access token and set in cookies 
-   const { AccessToken, RefreshToken } =await generateAndSetAccessAndRefreshTokens(res, refreashTokFromDb ,"rfreshToken");
+   const { accessToken, refreshToken } =await generateAndSetAccessAndRefreshTokens(res, refreashTokFromDb ,"rfreshToken");
    
-   //   await updateAnyFieldInDb(refreashTokFromDb?.id,{ refreshToken: RefreshToken},"saved");
+   await addTokensInTokensTable(refreashTokFromDb?.id,{ refreshToken: refreshToken},"saved");
 
      res.status(200).json({
         success : true ,
-        RefreshToken : RefreshToken
+        refreshToken : refreshToken
      })
 
 })

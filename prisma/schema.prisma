@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id                      Int     @id @default(autoincrement())   // crud completed 
+  id                      Int     @id @default(autoincrement())   
   firstname               String
   lastname                String 
   username                String  @unique()
@@ -24,7 +24,7 @@ model User {
 }
 
 
-model Tokens {                                                           // crud completed 
+model Tokens {                                                            
   id                      Int       @id @default(autoincrement())
   userId                  Int       @unique()
   user                    User      @relation(fields: [userId] , references: [id]) 
@@ -43,7 +43,7 @@ enum UserRole {
 }
 
 model Doctor {                              
-   id                  Int           @id @default(autoincrement())   // crud completed 
+   id                  Int           @id @default(autoincrement())   
    experience          Int
    specializations     String[]
    qualification       String[]
@@ -61,18 +61,17 @@ model Doctor {
 
 }
 
-model TimeSlot {                                                           //crud completed 
+model TimeSlot {                                                           
   id                     Int        @id @default(autoincrement())
   doctor                 Doctor     @relation(fields: [doctorId], references: [id])
   doctorId               Int        @unique()
-  days                   String[]
+  availabilitydays       String[]
   startTime              DateTime    // doctor dutration start time like from 9:00 to 12:00 
   endTime                DateTime
   duration               Int   // full duriotion like 3 hrs 5 hr and so on 
   appointmentDuration    Int    // one patient checking duration can be 20 minuts or maybe more 
   recurring              Boolean
 }
-
 
 model Patient {                                                    
   id              Int           @id @default(autoincrement())

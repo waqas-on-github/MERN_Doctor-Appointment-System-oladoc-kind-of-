@@ -6,13 +6,13 @@ import { sanitizeData } from "../userControler/createAccount.js";
 
 
 
-const addTokens = asyncHandler(async(req = null, res = null  , data=null) => {
+const addTokens = asyncHandler(async(req = null, res = null ) => {
 
     // inputs validation 
-    const {error} = tokenSchema.validate(req.body ||  data )
+    const {error} = tokenSchema.validate(req.body)
     if(error) throw new CustomError(error.message , error.code || 401 , error.stack || "line 13 addtokens")
     //input sanitization 
-    const sanitizedData = sanitizeData(req.body ||  data)
+    const sanitizedData = sanitizeData(req.body)
     // add recods in db 
     const addToken = await Prisma.tokens.create({
         data : sanitizedData
@@ -23,13 +23,16 @@ const addTokens = asyncHandler(async(req = null, res = null  , data=null) => {
 
     res.status(201).json({
         success : true ,
-        tokens : addToken,
         message : "tokens added successfully"
     })
 
     
 })
 
+
+const addTokenInDb = async (data) => {
+
+}
 
 export {
     addTokens

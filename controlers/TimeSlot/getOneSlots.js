@@ -28,7 +28,6 @@ res.status(200).json({
 const getSlot = async (slotId , doctorId) => {
   // cause no internet right now to see prisma OR statemanet wotk with findeunique 
    // so ill use if for now 
-  console.log("slot id "  +  slotId + "doctor id " + doctorId);
 
    var slot 
    if(slotId){

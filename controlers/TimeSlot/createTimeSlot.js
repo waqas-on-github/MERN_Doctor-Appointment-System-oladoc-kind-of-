@@ -3,15 +3,16 @@ import CustomError from "../../utils/CustomError.js";
 import Prisma from "../../prisma.js";
 import { slotSchema } from "../../validationSchema/slot.Schema.js";
 import { sanitizeData } from "../userControler/createAccount.js";
-import {  format , addHours} from 'date-fns';
+import { differenceInMinutes } from "date-fns";
+// import {  format , addHours} from 'date-fns';
 
 
 
 
 const createSlot = asyncHandler(async(req, res) => {
  console.log(req.body);
- const formattedTime24 = format(new Date(), 'yyyy-MM-ddTHH:mm:ssZ');
- console.log(formattedTime24);
+//  const formattedTime24 = format(new Date(), 'yyyy-MM-ddTHH:mm:ssZ');
+//  console.log(formattedTime24);
 
     // validate inputs 
     const {error} = slotSchema.validate(req.body)
@@ -25,6 +26,9 @@ const createSlot = asyncHandler(async(req, res) => {
    
      // add slots in db 
      const dbResponce = await addSlotInDb(sanitizedData) 
+
+     //  todo  check difference in time and add in duration after time slot created like 
+     //   const difference = Math.ceil(differenceInMinutes(endTime, startTime))
 
      res.status(201).json({
         success : true , 
@@ -50,7 +54,7 @@ const checkDoctorExistance = async(userId) => {
 }
   
 const addSlotInDb = async(data) => {
-    const addSlot = await Prisma.timeSlot.create({data : data})
+    const addSlot = await Prisma.timeSlot.create({data : data })
     if(!addSlot) throw new CustomError("can not add time slot" , 401 , "line 42 slots controler")
     return addSlot
 }

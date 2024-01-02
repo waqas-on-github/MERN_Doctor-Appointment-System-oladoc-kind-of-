@@ -12,7 +12,7 @@ const deleteSlot = asyncHandler(async(req, res) => {
  // delete slot 
 
  const deleted = await Prisma.timeSlot.delete({
-    where : {id : id }
+    where : {id :  parseInt(id) }
  })
 
  if(!deleted) throw new CustomError(`solt can not delete  by this id ${id}` , 401 , "line 18 deletslot")

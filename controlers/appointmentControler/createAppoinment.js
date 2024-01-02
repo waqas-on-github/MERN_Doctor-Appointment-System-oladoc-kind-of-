@@ -5,10 +5,9 @@ import { appointmentSchema } from '../../validationSchema/appointment.schema.js'
 import {sanitizeData} from '../userControler/createAccount.js'
 import { getSlot } from '../TimeSlot/getOneSlots.js'
 import { getDoctor } from '../doctorControler/getOneDoctor.js'
-import { isWeekend } from 'date-fns'
+import { differenceInMinutes } from 'date-fns'
 
-
-const createAppoinmet = asyncHandler(async(req, res) => {
+const createAppointment = asyncHandler(async(req, res) => {
 
     // validate inputs 
     const {error} = appointmentSchema.validate(req.body) 
@@ -22,8 +21,7 @@ const createAppoinmet = asyncHandler(async(req, res) => {
     // check doctor availability  for that day 
     // like  doctor appoinment capacity 
     // check doctor is avaliable like that day like tommorow 11:30pm 
-    const resp =   await isDoctorAvailableToday (sanitizedData.doctorId)
-    console.log(resp);
+    const resp =   await checkDoctorAndSlotAvilibility (sanitizedData.doctorId)
     // all above will be done after crud implementation 
 
     
@@ -42,32 +40,60 @@ const createAppoinmet = asyncHandler(async(req, res) => {
 
 
 
-const isDoctorAvailableToday = async (doctorId) => {
+const checkDoctorAndSlotAvilibility = async (doctorId) => {
 
-   // getdoctor id 
-   const doctor = await  getDoctor(doctorId)
-   console.log(doctor);
+   //  check doctor exists  
+    await  getDoctor(doctorId)
     // get slot id form doctor id 
     const slot = await getSlot( null , doctorId)
    
-    
-    // check is today is weekday or not 
-    // if now weekday then check number of available slot for this doctor 
+    // check is today doctor available 
+    const isDoctotTodayAvailable = isDoctotAvailableToday(slot?.availabilitydays)
+
+    if(isDoctotTodayAvailable){
+
+       // if doctor is available  then check number of available slot for this doctor 
+       const totalSlots = checkTimeSlotAvilibility(slot.startTime , slot.endTime , slot.appointmentDuration)
+        
+         
+
+    }
+   
     // if slot is availabe check is slot booked already for this time or not 
-     // if all above conditions met return true so doctor is available today and have a time 
+
+    // if all above conditions met return true so doctor is available today and have a time 
 
     return slot 
 
 }
 
-const  isDoctorTimeSlotIsAvailable = async (doctorId) =>{
 
+const isDoctotAvailableToday = (availabilitydays) => {
+
+   const dayNumber = new Date().getDay()
+   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'sunday']
+   const dayName = dayNames[dayNumber]
+   return availabilitydays.includes(dayName)
 }
 
+ const checkTimeSlotAvilibility = (startTime , endTime , appointmentDuration) => {
+
+ // calculate total minuts from start time and end time 
+  const difference = Math.ceil(differenceInMinutes(endTime, startTime))
+  console.log("differecne in minuts==================+++++++++");
+  console.log(difference);
+
+ // calculate number of slots with dividing with total minuts 
+
+ const numberOfAvailableSots =  Math.ceil((difference/appointmentDuration))
+ console.log("numbber of slots availiable by doctor for today");
+ console.log(numberOfAvailableSots);
+ return numberOfAvailableSots
+ }
 
 
 export{
-    createAppoinmet, 
-    isDoctorAvailableToday , 
-    isDoctorTimeSlotIsAvailable, 
+    createAppointment, 
+    checkDoctorAndSlotAvilibility , 
+    checkTimeSlotAvilibility
 }

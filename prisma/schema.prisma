@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model User { 
   id                      Int     @id @default(autoincrement())   
   firstname               String
   lastname                String 
@@ -23,8 +23,7 @@ model User {
   token                   Tokens?
 }
 
-
-model Tokens {                                                            
+model Tokens { 
   id                      Int       @id @default(autoincrement())
   userId                  Int       @unique()
   user                    User      @relation(fields: [userId] , references: [id]) 
@@ -42,7 +41,7 @@ enum UserRole {
   ADMIN
 }
 
-model Doctor {                              
+model Doctor { 
    id                  Int           @id @default(autoincrement())   
    experience          Int
    specializations     String[]
@@ -61,19 +60,19 @@ model Doctor {
 
 }
 
-model TimeSlot {                                                           
+model TimeSlot { 
   id                     Int        @id @default(autoincrement())
   doctor                 Doctor     @relation(fields: [doctorId], references: [id])
   doctorId               Int        @unique()
   availabilitydays       String[]
-  startTime              DateTime    // doctor dutration start time like from 9:00 to 12:00 
+  startTime              DateTime   // doctor dutration start time like from 9:00 to 12:00 
   endTime                DateTime
-  duration               Int   // full duriotion like 3 hrs 5 hr and so on 
+  duration               Int?   // full duriotion like 60mins to how much doctor can   and so on 
   appointmentDuration    Int    // one patient checking duration can be 20 minuts or maybe more 
   recurring              Boolean
 }
 
-model Patient {                                                    
+model Patient { 
   id              Int           @id @default(autoincrement())
   contact         String
   dateOfBirth     DateTime
@@ -82,7 +81,7 @@ model Patient {
   appointments    Appointment[]
 }
 
-model Appointment {                    
+model Appointment { 
   id                      Int               @id @default(autoincrement())
   doctor                  Doctor            @relation(fields: [doctorId], references: [id])
   doctorId                Int 

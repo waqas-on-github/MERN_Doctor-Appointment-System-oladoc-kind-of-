@@ -7,6 +7,7 @@ import { getSlot } from '../TimeSlot/getOneSlots.js'
 import { getDoctor } from '../doctorControler/getOneDoctor.js'
 import { differenceInMinutes } from 'date-fns'
 
+
 const createAppointment = asyncHandler(async(req, res) => {
 
     // validate inputs 
@@ -76,19 +77,17 @@ const isDoctotAvailableToday = (availabilitydays) => {
    return availabilitydays.includes(dayName)
 }
 
+
+
  const checkTimeSlotAvilibility = (startTime , endTime , appointmentDuration) => {
 
  // calculate total minuts from start time and end time 
   const difference = Math.ceil(differenceInMinutes(endTime, startTime))
-  console.log("differecne in minuts==================+++++++++");
-  console.log(difference);
-
  // calculate number of slots with dividing with total minuts 
-
  const numberOfAvailableSots =  Math.ceil((difference/appointmentDuration))
- console.log("numbber of slots availiable by doctor for today");
  console.log(numberOfAvailableSots);
  return numberOfAvailableSots
+
  }
 
 
@@ -97,3 +96,14 @@ export{
     checkDoctorAndSlotAvilibility , 
     checkTimeSlotAvilibility
 }
+
+/*
+lets do some plannigs 
+1 we divided time into timestamps 
+2 we can converts these timestamps actual timepices 
+3 each piece shold be uniuqely identified row in a table along other properties like booked or not and id 
+4 then cron job should run and set all this stuff for every doctrot every  day 
+5 we need to first get all doctors  
+6 then run process of get all of their time calculations 
+7 and then put all of them into tables 
+*/

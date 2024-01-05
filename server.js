@@ -1,4 +1,5 @@
 // import npm packages
+import { runCron } from './services/cronService.js'
 import 'dotenv/config.js'
 import express from 'express'
 import path from 'path'
@@ -46,6 +47,8 @@ app.use('/api/v1/timestemps' , timestampRouter)
 
 
 
+// run cron job 
+// runCron()
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -53,7 +56,6 @@ app.use(function (req, res, next) {
 })
 
 // error handler
-
 app.use(errorHandler)
 
 export { app }

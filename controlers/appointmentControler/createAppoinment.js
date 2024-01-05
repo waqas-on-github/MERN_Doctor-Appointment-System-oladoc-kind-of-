@@ -107,3 +107,23 @@ lets do some plannigs
 6 then run process of get all of their time calculations 
 7 and then put all of them into tables 
 */
+
+
+
+
+
+// what i want 
+
+/*  
+start time 
+
+5:00 -> dutarion 20 min  -> total available time -> 240 min  -> end time 9:00
+
+
+slot 1 -> 5:00: 5:20 
+slot 2 -> 5:00: 5:20 
+slot 3 -> 5:00: 5:20 
+slot 4 -> 5:00: 5:20 
+
+
+untill met end */

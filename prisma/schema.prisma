@@ -78,10 +78,11 @@ model slotTimestemps {
   id                     Int @id @default(autoincrement())
   doctor                 Doctor     @relation(fields: [doctorId], references: [id])
   doctorId               Int        
-  startTime              DateTime
-  endTime                DateTime
-  booked                 Boolean 
-
+  startTime              DateTime  
+  endTime                DateTime   
+  booked                 Boolean? 
+  createdAt              DateTime
+  
 }
 
 model Patient { 

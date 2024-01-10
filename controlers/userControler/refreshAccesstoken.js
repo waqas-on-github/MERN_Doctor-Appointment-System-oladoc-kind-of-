@@ -24,15 +24,15 @@ const refreshAccessToken = asyncHandler( async(req, res) => {
 
      if(!varifyToken) throw new CustomError("refreshtoken is invalid or can not be decoded")
   // get stored refresh token from db 
-   const refreashTokFromDb = await Prisma.user.findUnique({where : {id : varifyToken.data?.id}})    
+   const refreashTokenFromDb = await Prisma.user.findUnique({where : {id : varifyToken.data?.id}})    
   
    // compare incomming token with stored token 
    if(incomingRefreshToken !== refreashTokFromDb?.refreshToken) throw new CustomError("token comparision failed " ,400 ,"line 31 refreshAccessToken controler")
 
    // generate access token and set in cookies 
-   const { accessToken, refreshToken } =await generateAndSetAccessAndRefreshTokens(res, refreashTokFromDb ,"rfreshToken");
+   const { accessToken, refreshToken } =await generateAndSetAccessAndRefreshTokens(res, refreashTokenFromDb ,"rfreshToken");
    
-   await addTokensInTokensTable(refreashTokFromDb?.id,{ refreshToken: refreshToken},"saved");
+   await addTokensInTokensTable(refreashTokenFromDb?.id,{ refreshToken: refreshToken},"saved");
 
      res.status(200).json({
         success : true ,

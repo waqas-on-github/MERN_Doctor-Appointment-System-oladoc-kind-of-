@@ -29,7 +29,8 @@ const getSlot = async (slotId , doctorId) => {
   // cause no internet right now to see prisma OR statemanet wotk with findeunique 
    // so ill use if for now 
 
-   var slot 
+   var slot ;
+   
    if(slotId){
        slot = await Prisma.timeSlot.findUnique({
           where : {id :  parseInt(slotId) }
@@ -37,7 +38,6 @@ const getSlot = async (slotId , doctorId) => {
    }
 
    if(doctorId) {
-    
     slot = await Prisma.timeSlot.findUnique({
         where : {doctorId :  parseInt(doctorId) }
     })

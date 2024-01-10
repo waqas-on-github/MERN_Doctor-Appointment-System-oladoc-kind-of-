@@ -1,5 +1,5 @@
 // import npm packages
-import { runCron } from './services/cronService.js'
+import { runUpdateCron , runCreateCron} from './services/cronService.js'
 import 'dotenv/config.js'
 import express from 'express'
 import path from 'path'
@@ -47,8 +47,10 @@ app.use('/api/v1/timestemps' , timestampRouter)
 
 
 
-// run cron job 
-// runCron()
+// run cron job after every 24 hour about doctor appointments time resceduling 
+runUpdateCron()
+// run create doctor cron job
+runCreateCron() 
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

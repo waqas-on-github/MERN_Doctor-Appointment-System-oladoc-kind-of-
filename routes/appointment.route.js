@@ -1,10 +1,13 @@
 import { Router } from "express";
-import { createAppointment } from "../controlers/appointmentControler/createAppoinment.js";
-
+import { getAppointmentDetails } from "../controlers/appointmentControler/getAppointmentInfo.js";
 
 const router = Router()
 router.get("/" , (req, res) => res.send("sanity check"))
-router.post("/new" , createAppointment )
+// request sending pattern 
+//---> first user will send request to seed datails of specific doctor/clinic 
+//---> then on base of outputs patient will select timestemp and request for bookingrequset 
+
+router.post("/details" , getAppointmentDetails )
 
 
 export {

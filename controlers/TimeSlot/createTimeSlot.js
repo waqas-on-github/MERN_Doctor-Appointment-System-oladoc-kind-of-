@@ -3,14 +3,12 @@ import CustomError from "../../utils/CustomError.js";
 import Prisma from "../../prisma.js";
 import { slotSchema } from "../../validationSchema/slot.Schema.js";
 import { sanitizeData } from "../userControler/createAccount.js";
-import { differenceInMinutes } from "date-fns";
-// import {  format , addHours} from 'date-fns';
-
+import {  createTimeStempsByAppCall} from "../slotTimestempsControlers/createTimestemps.js";
 
 
 
 const createSlot = asyncHandler(async(req, res) => {
- console.log(req.body);
+//  console.log(req.body);
 //  const formattedTime24 = format(new Date(), 'yyyy-MM-ddTHH:mm:ssZ');
 //  console.log(formattedTime24);
 
@@ -26,13 +24,16 @@ const createSlot = asyncHandler(async(req, res) => {
    
      // add slots in db 
      const dbResponce = await addSlotInDb(sanitizedData) 
+    
+       // send newly created slot data to createtimstemp controler 
+   if  (dbResponce){
+     await createTimeStempsByAppCall(dbResponce)
 
-     //  todo  check difference in time and add in duration after time slot created like 
-     //   const difference = Math.ceil(differenceInMinutes(endTime, startTime))
-
+   }
+      
      res.status(201).json({
         success : true , 
-        slots : dbResponce
+        slots : dbResponce, 
      })
 
 
@@ -41,7 +42,7 @@ const createSlot = asyncHandler(async(req, res) => {
 
 
 const checkDoctorExistance = async(userId) => {
-    console.log(userId);
+    // console.log(userId);
 
     const checkExistances = await Prisma.doctor.findUnique({ 
         where : {id:  userId}

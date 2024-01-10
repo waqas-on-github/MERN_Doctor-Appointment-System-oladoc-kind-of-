@@ -1,6 +1,5 @@
 import { Router } from "express";
-import { seedTimestemps } from "../controlers/slotTimestempsControlers/createTimestemps.js";
-
+import { seedTimestemps } from "../controlers/slotTimestempsControlers/updateTimestemps.js";
 
 const router = Router() 
 

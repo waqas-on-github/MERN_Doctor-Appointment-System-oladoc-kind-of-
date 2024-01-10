@@ -49,11 +49,9 @@ model Doctor {
    waitTime            String
    services            String[]
    languages           String[]
-   availability        Boolean
-   availableInHrs      Int 
    memberships         String[]
    about               String
-   userId              Int           @unique
+   userId              Int           @unique()
    user                User          @relation(fields: [userId], references: [id])
    appointments        Appointment[]
    DoctorAvailability  TimeSlot?
@@ -62,6 +60,7 @@ model Doctor {
 }
 
 model TimeSlot { 
+
   id                     Int        @id @default(autoincrement())
   doctor                 Doctor     @relation(fields: [doctorId], references: [id])
   doctorId               Int        @unique()
@@ -70,20 +69,32 @@ model TimeSlot {
   endTime                DateTime
   duration               Int?      // full duriotion like 60mins to how much doctor can  and so on 
   appointmentDuration    Int       // one patient checking duration can be 20 minuts or maybe more 
-  recurring              Boolean
+  recurring              Boolean? @default(true)
+  slotTimestamps         slotTimestemps[]
+
+
 }
 
-model slotTimestemps {
+model slotTimestemps {  // this table row will be updated every day so this is just for reseduling not for saving data permanntly 
 
-  id                     Int @id @default(autoincrement())
-  doctor                 Doctor     @relation(fields: [doctorId], references: [id])
-  doctorId               Int        
-  startTime              DateTime  
-  endTime                DateTime   
-  booked                 Boolean? 
-  createdAt              DateTime
+  id                     Int          @id @default(autoincrement())
+  doctor                 Doctor       @relation(fields: [doctorId], references: [id])
+  doctorId               Int     
+  slotId                 Int
+  slot                   TimeSlot     @relation(fields: [slotId] ,references: [id])     
+  startTime              DateTime?  
+  endTime                DateTime?   
+  createdAt              DateTime     @default(now())
+  updatedAt              DateTime?    
+  booked                 Boolean      @default(false)
+  requestedToBook        Boolean      @default(false)
+
   
 }
+
+
+
+
 
 model Patient { 
   id              Int           @id @default(autoincrement())
@@ -101,9 +112,9 @@ model Appointment {
   patient                 Patient           @relation(fields: [patientId], references: [id])
   patientId               Int 
   doseDoctorAccepted      Boolean?
-  date                    DateTime  // date and time  for what appointment booked like 2jan 24 5:30pm to 5:50pm
-  status                  AppointmentStatus
+  status                  AppointmentStatus?  
   appointmentSlot         appointmentSlot?
+  createdAt               DateTime           @default(now())
  
 }
 
@@ -114,7 +125,6 @@ model appointmentSlot {
    appointment     Appointment  @relation(fields: [appointmentId] , references: [id])
    checkinTime     DateTime     // the time patient meant to start his checkup 
    checkoutTime    DateTime     // the time patient ment to end his checkup 
-
 
 }
 
@@ -127,5 +137,7 @@ enum AppointmentStatus {
 
 
 
+
+  
 
 

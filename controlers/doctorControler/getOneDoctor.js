@@ -15,9 +15,9 @@ const getOneDoctor = asyncHandler(async (req, res) => {
   });
 });
 
-const getDoctor = async (doctroId) => {
+const getDoctor = async (doctorId) => {
   const doctor = await Prisma.doctor.findUnique({
-    where: { id: parseInt(doctroId) },
+    where: { id: parseInt(doctorId) },
   });
   if (!doctor)
     throw new CustomError("doctor not found ", 401, "line 20 getonedoctor");

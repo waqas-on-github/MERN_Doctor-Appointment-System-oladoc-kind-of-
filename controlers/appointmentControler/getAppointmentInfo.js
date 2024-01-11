@@ -7,12 +7,7 @@ import { getSlot } from "../TimeSlot/getOneSlots.js";
 import { getDoctor } from "../doctorControler/getOneDoctor.js";
 import { differenceInMinutes } from "date-fns";
 
-
-
-
-
 const getAppointmentDetails = asyncHandler(async (req, res) => {
-
   // validate inputs
   const { error } = appointmentSchema.validate(req.body);
   if (error)
@@ -32,7 +27,7 @@ const getAppointmentDetails = asyncHandler(async (req, res) => {
   // check patient existence is patient exists in db or not
   // all exceptions and error handling done in funcation already
   await getOnePatientById(sanitizedData.patientId);
-  
+
   // thrwoing error if doctor is not available
   if (!checkDoctorAndSlotsAvailable || checkDoctorAndSlotsAvailable <= 0)
     throw new CustomError(
@@ -44,12 +39,10 @@ const getAppointmentDetails = asyncHandler(async (req, res) => {
   const getTimeStemps = await getDoctorTimeStemps(sanitizedData.doctorId);
   // all above will be done after crud implementation
   res.json({
-       success: true ,
-       totalTimeStemps :  getTimeStemps.length,
-       timeStempinfo : getTimeStemps
-       
+    success: true,
+    totalTimeStemps: getTimeStemps.length,
+    timeStempinfo: getTimeStemps,
   });
-
 });
 
 // check doctor availability  for that day
@@ -65,8 +58,11 @@ const checkDoctorAndSlotAvilibility = async (doctorId) => {
   // console.log(isDoctotTodayAvailable);
 
   if (!isDoctotTodayAvailable)
-
-     throw new CustomError( `today doctor is not available`,401,"line 50 appioment ctrl");
+    throw new CustomError(
+      `today doctor is not available`,
+      401,
+      "line 50 appioment ctrl"
+    );
 
   if (isDoctotTodayAvailable) {
     // if doctor is available  then check number of available slot for this doctor
@@ -85,7 +81,7 @@ const isDoctotAvailableToday = (availabilitydays) => {
   // get current day number of the week like sunday --> 0 monday-->1 and so on
   // note keep in mind day numbers also start like array indexes like 0,1,2,3,....
 
-  const dayNumber = new Date().getDay()
+  const dayNumber = new Date().getDay();
 
   const dayNames = [
     "Sunday",
@@ -109,7 +105,6 @@ const calculateNumberOfAvailableSlots = (
   endTime,
   appointmentDuration
 ) => {
-   
   // calculate total minuts from start time and end time
   const difference = Math.ceil(differenceInMinutes(endTime, startTime));
   // calculate number of slots with dividing with total minuts
@@ -121,19 +116,18 @@ const calculateNumberOfAvailableSlots = (
 // get doctor timestemps that are not booked and are availble to book
 const getDoctorTimeStemps = async (doctorId) => {
   const slot = await getSlot(null, parseInt(doctorId));
-
   const availableTimestemps = await Prisma.slotTimestemps.findMany({
     where: {
-      AND: [  
+      AND: [
         { doctorId: doctorId },
         { slotId: slot.id },
-         { booked: false },
-          {
-            startTime: {
-              gte:  new Date().toISOString()
+        { booked: false },
+        // {
+        //   startTime: {
+        //     gte:  new Date().toISOString()   //TODO will be uncommented after timestmeps correct implememnttion
 
-            },
-          },
+        //   },
+        // },
       ],
     },
   });
@@ -143,7 +137,6 @@ const getDoctorTimeStemps = async (doctorId) => {
 
 // checking patient existance
 const getOnePatientById = async (patientId) => {
-
   const onePatient = await Prisma.patient.findUnique({
     where: {
       id: patientId,

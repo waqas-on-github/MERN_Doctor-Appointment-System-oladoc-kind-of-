@@ -1,7 +1,10 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
 import Prisma from "../../prisma.js";
-
+import { appointmentRequestSchema } from "../../validationSchema/appointment.schema.js";
+import { sanitizeData } from "../userControler/createAccount.js";
+import { getDoctor } from "../doctorControler/getOneDoctor.js";
+import { getOnePatientById } from "./getAppointmentInfo.js";
 
 /*
 ...................APPLICATION LOGIC SENARIOS............
@@ -16,6 +19,7 @@ import Prisma from "../../prisma.js";
 
   in slotstemps Table set record  "requsetedTobook : true" so other user can not reaplly which timestemp is 
   already likned/intented to booked by some user/patient
+  set patientid alos which patient is requesting to book this
 
 
  """"""""if doctor accept appointment request from patient"""""
@@ -48,17 +52,79 @@ then if  appointment will be accepted"SCHEDULED"  by doctor patient should alos 
 -->doctor sould get email when more then 3 appointment requested   
 */
 
+const sendAppointmentRequets = asyncHandler(async (req, res) => {
+  /// validate inputs
+  const { error } = appointmentRequestSchema.validate(req.body);
+  if (error) throw new CustomError(error.message, error.code, error.stack);
 
-const sendAppointmentRequets = asyncHandler(async(req, res) => {
+  // console.log(req.body);
 
+  /// senitize inputs
+  const sanitizedData = sanitizeData(req.body);
 
+  //check  timestemp exists and not requested to booked by some other patient 
+  const doseTimeStempsExists = await getOneTimeStemp({
+    id: parseInt(sanitizedData.timeStempsId),
+    requestedToBook: false,
+    patientId : null
 
-})
+  });
 
+  if (!doseTimeStempsExists)
+    throw new CustomError(
+      "this timestemp not found or already booked by some one else ",
+      401,
+      "line 72 sendAppointetrequest"
+    );
 
+  /*
+       in slotstemps Table set record  "requsetedTobook : true" so other user can not reaplly which timestemp is 
+       already likned/intented to booked by some user/patient
+     */
 
+  const timeStempUpdaetResult = await updaetTimeStemps(
+    parseInt(sanitizedData.timeStempsId),
+    { requestedToBook: true, patientId: parseInt(sanitizedData.patientId) }
+  );
+  if (!timeStempUpdaetResult)
+    throw new CustomError(
+      "failed to send appointment request",
+      401,
+      "line 80 sedappointrequest"
+    );
+  // TODO send email/sms to doctor /clinic admin  for appointment request by some patient 
 
+  // send responce back
 
-export{ 
-    sendAppointmentRequets
-}
+  res.status(201).json({
+    success: true,
+    message: "appoint requested",
+    timeStemp: timeStempUpdaetResult,
+  });
+});
+
+const updaetTimeStemps = async (timeStempId, data) => {
+  try {
+    var dbResp = await Prisma.slotTimestemps.update({
+      where: { id: timeStempId },
+      data: { ...data },
+    });
+  } catch (error) {
+    return error;
+  }
+  return dbResp;
+};
+
+// just get one timestemp by reqesting to db
+const getOneTimeStemp = async (options) => {
+  try {
+    var dbResp = await Prisma.slotTimestemps.findUnique({
+      where: { ...options },
+    });
+  } catch (error) {
+    return error;
+  }
+  return dbResp;
+};
+
+export { sendAppointmentRequets, getOneTimeStemp, updaetTimeStemps };

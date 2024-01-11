@@ -88,13 +88,12 @@ model slotTimestemps {  // this table row will be updated every day so this is j
   updatedAt              DateTime?    
   booked                 Boolean      @default(false)
   requestedToBook        Boolean      @default(false)
+  patientId             Int?        
+  //when patient request to book this  timestemp  we always wanna make sure hes same patient who requested 
+  // to book by storing his id here  
 
   
 }
-
-
-
-
 
 model Patient { 
   id              Int           @id @default(autoincrement())
@@ -113,20 +112,13 @@ model Appointment {
   patientId               Int 
   doseDoctorAccepted      Boolean?
   status                  AppointmentStatus?  
-  appointmentSlot         appointmentSlot?
   createdAt               DateTime           @default(now())
+  checkinTime             DateTime     // the time patient ment to start his checkup 
+  checkoutTime            DateTime     // the time patient ment to end his checkup 
  
 }
 
-model appointmentSlot {
 
-   id              Int          @id @default(autoincrement()) 
-   appointmentId   Int          @unique() // one booked appointment can have one time slot like 5:30 to 5:50
-   appointment     Appointment  @relation(fields: [appointmentId] , references: [id])
-   checkinTime     DateTime     // the time patient meant to start his checkup 
-   checkoutTime    DateTime     // the time patient ment to end his checkup 
-
-}
 
 enum AppointmentStatus {
   PENDING

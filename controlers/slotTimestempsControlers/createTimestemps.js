@@ -10,7 +10,7 @@ const createTimeStempsByAppCall = async(slots)  => {
 
     
 const slotTimestemps = returnTimeStemps(slots)
-    
+    // console.log(slotTimestemps);
 try {
     var createdTimeStemps= await createNewTimeStemps(slotTimestemps)
     
@@ -27,7 +27,7 @@ return createdTimeStemps
 
 const createNewTimeStemps = async (timeStemps) => {
     return await Promise.all (timeStemps.map(async (oneTimeStemp) => {
-        // console.log(oneTimeStemp);
+         console.log(oneTimeStemp);
          return  await Prisma.slotTimestemps.create({ data: oneTimeStemp });
  
  }))

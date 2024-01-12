@@ -1,7 +1,7 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
 import Prisma from "../../prisma.js";
-import { validateById } from "../doctorControler/getOneDoctor.js";
+import { validateById } from "../../helpers/validateById.js";
 
 
 const deleteTokenTable  = asyncHandler(async(req, res ) => {

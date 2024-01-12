@@ -1,12 +1,12 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
-import bcrypt from "bcryptjs";
 import { userschemaforCreateAccount } from "../../validationSchema/user.schema.js";
 import Prisma from "../../prisma.js";
-import sanitizeHtml from "sanitize-html";
+import { hashPass}  from "../../helpers/hashPassword.js";
 import {mailHelper} from '../../services/mailHelper.js'
 import { uploadSingle } from "../../services/uploadservice.js";
 import { generateVerificationToken } from "../../utils/generatejwt.js";
+import { sanitizeData } from "../../helpers/sanitizeData.js";
 import  Jwt  from "jsonwebtoken"
 
 
@@ -16,7 +16,7 @@ const createAccount = asyncHandler(async (req, res) => {
   // if we git error
   if (error) throw new CustomError(error.message, 401, "stack line 28");
   // hashing password
-  const hashPass = await bcrypt.hash(req.body.password, 10);
+   const hashedPass = await hashPass(req.body.password)  
   // upload image on cloudnairy
   // const result = await uploadSingle(req,res) // will be uncomented later
   //senitize incoming data
@@ -27,7 +27,7 @@ const createAccount = asyncHandler(async (req, res) => {
   if (DoseExists) throw new CustomError("user already registerd", 401);
 
   // call create user funcation
-  const createdUser = await createUserInDatabase(senitizeData, hashPass);
+  const createdUser = await createUserInDatabase(senitizeData, hashedPass);
   // generate and  set token
   //for saftey
   createdUser.password = undefined;
@@ -67,18 +67,7 @@ const CheckUserExists = async (email) => {
   return DoseExists;
 };
 
-//senitize data
-const sanitizeData = (data) => {
-  const sanitizedData = { ...data };
 
-  Object.keys(sanitizedData).forEach((key) => {
-    if (typeof sanitizedData[key] === "string") {
-      sanitizedData[key] = sanitizeHtml(sanitizedData[key]);
-    }
-  });
-
-  return sanitizedData;
-};
 
 const sendVerificationEmail = async(userInfo , req) => {
 

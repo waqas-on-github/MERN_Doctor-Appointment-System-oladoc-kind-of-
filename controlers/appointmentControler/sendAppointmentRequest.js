@@ -3,7 +3,7 @@ import CustomError from "../../utils/CustomError.js";
 import Prisma from "../../prisma.js";
 import { appointmentRequestSchema } from "../../validationSchema/appointment.schema.js";
 import { sanitizeData } from "../userControler/createAccount.js";
-import { getDoctor } from "../doctorControler/getOneDoctor.js";
+import { getDoctor } from "../../helpers/getDoctor.js"
 import { getOnePatientById } from "./getAppointmentInfo.js";
 
 /*

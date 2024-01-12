@@ -38,7 +38,6 @@ const createDoctor = asyncHandler(async(req, res ) => {
 
 const addDoctorDataInDb = async(data) => {
 
-  
 const dbResponce = await Prisma.doctor.create({data : data})
   
 
@@ -50,5 +49,6 @@ return dbResponce
 
 
 export {
-    createDoctor ,   addDoctorDataInDb
+    createDoctor ,  
+     addDoctorDataInDb
 }

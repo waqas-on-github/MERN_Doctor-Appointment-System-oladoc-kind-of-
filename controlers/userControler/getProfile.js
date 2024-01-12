@@ -1,7 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
-import Prisma from "../../prisma.js";
-
+import {getOneUser} from '../../helpers/getProfile.js'
 const getProfile = asyncHandler(async(req, res ) => {
 
   const userId = req?.user?.id ||  req.params.id 
@@ -26,18 +25,6 @@ const getProfile = asyncHandler(async(req, res ) => {
 
 
 
-const getOneUser = async (userId) => { 
-
- const user = await Prisma.user.findUnique({
-    where : {id :userId}
- }) 
-
- if(!user) throw new CustomError("can not find user db quer error " , 401 , "line 29 getprofile controler")
-
- return user
-
-
-}
 
 export {
     getProfile,

@@ -29,8 +29,14 @@ const appointmentUpdateSchema = {
 
 }
 
+
+const appointementCancelationSchema = {
+  
+}
+
 export{
     appointmentSchema, 
     appointmentRequestSchema,
-    appointmentUpdateSchema
+    appointmentUpdateSchema, 
+    appointementCancelationSchema
 }

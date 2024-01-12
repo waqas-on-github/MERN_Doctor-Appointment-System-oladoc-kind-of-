@@ -3,8 +3,8 @@ import CustomError from "../../utils/CustomError.js";
 import Prisma from "../../prisma.js";
 import { appointmentSchema } from "../../validationSchema/appointment.schema.js";
 import { sanitizeData } from "../userControler/createAccount.js";
-import { getSlot } from "../TimeSlot/getOneSlots.js";
-import { getDoctor } from "../doctorControler/getOneDoctor.js";
+import { getSlot } from "../../helpers/getOneSlot.js";
+import { getDoctor } from "../../helpers/getDoctor.js";
 import { differenceInMinutes } from "date-fns";
 
 const getAppointmentDetails = asyncHandler(async (req, res) => {

@@ -3,7 +3,7 @@ import asyncHandler from '../../utils/asyncHandler.js'
 import CustomError from '../../utils/CustomError.js'
 import { updateDoctorSchema } from '../../validationSchema/doctor.schema.js'
 import { sanitizeData } from '../userControler/createAccount.js'
-import { validateById } from './getOneDoctor.js'
+import { validateById } from '../../helpers/validateById.js'
 
 
 const updateDoctor = asyncHandler(async(req, res) => {

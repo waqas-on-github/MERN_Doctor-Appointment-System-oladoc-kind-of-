@@ -1,7 +1,7 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
 import bcrypt from "bcryptjs";
-import {sanitizeData }from "./createAccount.js"
+import {sanitizeData }from "../../helpers/sanitizeData.js"
 import { CheckUserExists } from "./createAccount.js";
 import { userLoginSchema } from "../../validationSchema/user.schema.js";
 import { generateAccessToken ,  generateRefreshToken } from "../../utils/generatejwt.js";

@@ -1,8 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
-import CustomError from "../../utils/CustomError.js";
-import Prisma from "../../prisma.js";
-
-import { validateById } from "../doctorControler/getOneDoctor.js";
+import { validateById } from "../../helpers/validateById.js";
+import { getSlot } from "../../helpers/getOneSlot.js";
 
 
 const getOneSlot = asyncHandler(async(req, res) => {
@@ -25,31 +23,6 @@ res.status(200).json({
 
 
 
-const getSlot = async (slotId , doctorId) => {
-  // cause no internet right now to see prisma OR statemanet wotk with findeunique 
-   // so ill use if for now 
-
-   var slot ;
-   
-   if(slotId){
-       slot = await Prisma.timeSlot.findUnique({
-          where : {id :  parseInt(slotId) }
-      })
-   }
-
-   if(doctorId) {
-    slot = await Prisma.timeSlot.findUnique({
-        where : {doctorId :  parseInt(doctorId) }
-    })
-}
-    
-    
-    if(!slot)  throw new CustomError("not slot found" , 401 , "line 18 getoneslot")
-
-    return slot 
-}
-
 export {
-    getOneSlot, 
-    getSlot
+    getOneSlot
 }

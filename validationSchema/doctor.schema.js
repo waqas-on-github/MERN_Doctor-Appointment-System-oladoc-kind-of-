@@ -26,7 +26,7 @@ const updateDoctorSchema = Joi.object({
     languages              : Joi.array().items(Joi.string()),  
     memberships            : Joi.array().items(Joi.string()),    
     about                  : Joi.string() , 
-    userId                 : Joi.number()
+    userId                 : Joi.number(),
  
  }) 
  

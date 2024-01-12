@@ -2,8 +2,9 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
 import Prisma from "../../prisma.js";
 import { slotSchema } from "../../validationSchema/slot.Schema.js";
-import { sanitizeData } from "../userControler/createAccount.js";
+import { sanitizeData } from "../../helpers/sanitizeData.js";
 import {  createTimeStempsByAppCall} from "../slotTimestempsControlers/createTimestemps.js";
+import {checkDoctorExistance } from  "../../helpers/checkDoctorExistance.js"
 
 
 
@@ -41,19 +42,6 @@ const createSlot = asyncHandler(async(req, res) => {
 })
 
 
-const checkDoctorExistance = async(userId) => {
-    // console.log(userId);
-
-    const checkExistances = await Prisma.doctor.findUnique({ 
-        where : {id:  userId}
-    })
-
-    if(!checkExistances) throw new CustomError("doctor dont existes" , 401 ,"line 30 createslot") 
-
-    return checkExistances
-
-}
-  
 const addSlotInDb = async(data) => {
     const addSlot = await Prisma.timeSlot.create({data : data })
     if(!addSlot) throw new CustomError("can not add time slot" , 401 , "line 42 slots controler")

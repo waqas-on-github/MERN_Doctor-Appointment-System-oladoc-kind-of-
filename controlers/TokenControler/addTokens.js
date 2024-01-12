@@ -2,7 +2,7 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
 import Prisma from "../../prisma.js";
 import { tokenSchema } from "../../validationSchema/token.schema.js";
-import { sanitizeData } from "../userControler/createAccount.js";
+import { sanitizeData } from "../../helpers/sanitizeData.js";
 
 
 
@@ -30,9 +30,7 @@ const addTokens = asyncHandler(async(req = null, res = null ) => {
 })
 
 
-const addTokenInDb = async (data) => {
 
-}
 
 export {
     addTokens

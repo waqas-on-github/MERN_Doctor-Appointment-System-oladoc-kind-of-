@@ -8,6 +8,7 @@ datasource db {
 }
 
 model User { 
+
   id                      Int     @id @default(autoincrement())   
   firstname               String
   lastname                String 
@@ -21,9 +22,11 @@ model User {
   doctor                  Doctor? 
   patient                 Patient? 
   token                   Tokens?
+
 }
 
 model Tokens { 
+
   id                      Int       @id @default(autoincrement())
   userId                  Int       @unique()
   user                    User      @relation(fields: [userId] , references: [id]) 
@@ -42,6 +45,7 @@ enum UserRole {
 }
 
 model Doctor { 
+
    id                  Int           @id @default(autoincrement())   
    experience          Int
    specializations     String[]
@@ -88,7 +92,7 @@ model slotTimestemps {  // this table row will be updated every day so this is j
   updatedAt              DateTime?    
   booked                 Boolean      @default(false)
   requestedToBook        Boolean      @default(false)
-  patientId             Int?        
+  patientId              Int?        
   //when patient request to book this  timestemp  we always wanna make sure hes same patient who requested 
   // to book by storing his id here  
 
@@ -96,22 +100,26 @@ model slotTimestemps {  // this table row will be updated every day so this is j
 }
 
 model Patient { 
+
   id              Int           @id @default(autoincrement())
   contact         String
   dateOfBirth     DateTime
   userId          Int           @unique()
   user            User          @relation(fields: [userId], references: [id])
   appointments    Appointment[]
+
 }
 
 model Appointment { 
+
   id                      Int               @id @default(autoincrement())
   doctor                  Doctor            @relation(fields: [doctorId], references: [id])
   doctorId                Int 
   patient                 Patient           @relation(fields: [patientId], references: [id])
   patientId               Int 
   doseDoctorAccepted      Boolean?
-  status                  AppointmentStatus?  
+  statusByDoctor          appointmentStatus?  
+  statusByPatient         appointmentStatusByPatient? // patient will confirm appointment secduling 
   createdAt               DateTime           @default(now())
   checkinTime             DateTime     // the time patient ment to start his checkup 
   checkoutTime            DateTime     // the time patient ment to end his checkup 
@@ -120,13 +128,20 @@ model Appointment {
 
 
 
-enum AppointmentStatus {
+enum appointmentStatus {
   PENDING
   SCHEDULED
   FULLFILLED
   CANCELED
 }
 
+
+enum appointmentStatusByPatient {
+  PENDING
+  SCHEDULED
+  FULLFILLED
+  CANCELED
+}
 
 
 

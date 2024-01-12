@@ -1,9 +1,10 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
 import Prisma from "../../prisma.js";
-import { validateById } from "../doctorControler/getOneDoctor.js";
+import { validateById } from "../../helpers/validateById.js";
 import { updateSlotSchema } from "../../validationSchema/slot.Schema.js";
 import { sanitizeData } from "../userControler/createAccount.js";
+import  {checkSlotExistance}  from '../../helpers/checkSlotExistance.js'
 
 
 const updateSlot = asyncHandler(async(req, res) => {
@@ -36,15 +37,7 @@ res.status(201).json({
 
 
 
-const checkSlotExistance = async (slotId ) => {
 
-    const slotExists = await Prisma.timeSlot.findUnique({
-        where : {id :  parseInt(slotId)}
-    })
-    if(!slotExists) throw new CustomError(`slot not found with this ${slotId}` , 401 , "line 32 updateslot")
-
-    return slotExists
-}
 
 const updateAnyFieldInSlot = async (data , slotId) => {
  
@@ -61,6 +54,5 @@ const updateAnyFieldInSlot = async (data , slotId) => {
 }
 export {
     updateSlot,
-    checkSlotExistance,
     updateAnyFieldInSlot
 }

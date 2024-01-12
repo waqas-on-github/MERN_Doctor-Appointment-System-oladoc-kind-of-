@@ -6,7 +6,7 @@ import { sanitizeData } from "../userControler/createAccount.js";
 import { getOneTimeStemp } from "./sendAppointmentRequest.js";
 import { updaetTimeStemps } from "./sendAppointmentRequest.js";
 import {appointementStatusConstents }from '../../utils/constents.js'
-import { getDoctor } from "../doctorControler/getOneDoctor.js";
+import { getDoctor } from "../../helpers/getDoctor.js";
 /*
 ...REQUIREMENTS TO SEND APPIONTMENT REQUEST 
  ... patientId 
@@ -69,12 +69,14 @@ const acceptAppointmentRequest = asyncHandler(async (req, res) => {
   // after setting timesstemp to booked we need to copy its start time and end time and crete new
   
     const dbResponce = await addAppointmentRecordInDb({
+
      doctorId             : sanitizedData.doctorId,
      patientId            : sanitizedData.patientId,
      doseDoctorAccepted   : true,
      status               : appointementStatusConstents.SCHEDULED,  
-     checkinTime          :timeStempUpdaetResult.startTime,
-     checkoutTime          : timeStempUpdaetResult.endTime 
+     checkinTime          : timeStempUpdaetResult.startTime,
+     checkoutTime         : timeStempUpdaetResult.endTime 
+     
     })
 
    
@@ -107,7 +109,7 @@ const isTimeSlotBookedAlreadyBySomePatient = async (filters) => {
 
 
 const addAppointmentRecordInDb = async(data) => {
-  console.log(data);
+
      let dbResponce ;
      try {
          dbResponce = Prisma.appointment.create({data: {...data}})

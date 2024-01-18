@@ -24,7 +24,7 @@ router.post("/login" , limiter , login) // rate limit on more then 50 request pe
 router.get("/logout" , isLoggendIn,logout)
 router.post("/update/:id", updateProfile)
 router.post("/refresh" , refreshAccessToken)
-router.post("/verify/:token" , verifyEmail)
+router.get("/verify/:token" , verifyEmail)
 
 export {
     router

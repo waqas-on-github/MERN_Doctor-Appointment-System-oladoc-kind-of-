@@ -1,32 +1,41 @@
+import Prisma from "../../prisma.js"
+import CustomError from "../../utils/CustomError.js"
 import asyncHandler from "../../utils/asyncHandler.js"
-import CustomError from '../../utils/asyncHandler.js'
 import JWT from "jsonwebtoken"
 
-const verifyEmail = asyncHandler(async(req, res) => {
+const verifyEmail = asyncHandler(async (req, res) => {
 
-    const {incomingToken} = req.params
-    // verify incoming token fisrt 
-   JWT.verify(incomingToken , process.env.EMAIL_VERIFICATION_SECRET)
-    
-    
-   const verifyUrl = `${req.protocol}://${req.get("host")}/api/v1/users/password/reset/${incomingToken}`
+    const { token } = req.params
 
+    const verify = JWT.verify(token, process.env.EMAIL_VERIFICATION_SECRET)
+    // if user not verified 
+    if (!verify) throw new CustomError("failed to verify user", 401)
+    // if success to verified update field in database 
+    if (verify) {
 
-   const message = `your reset password url us as folows \n\n\n\n\ ${resetUrl}\n\n\n\n\ if this is not requseted by you please ignore`
+        var verifiedUser = await Prisma.user.update({
+            where: {
+                id: verify.id
+            },
+            data: { isVerfied: true }
+        })
+    }
 
-     
-    
-    await mailHelper({ 
-      email : user.email , 
-      subject :"password change request" , 
-      text:  message
-     })
-
+    res.status(200).json({
+        success: true,
+        verified: verifiedUser
+    })
 
 })
 
 
 
-export{
+
+
+
+
+
+
+export {
     verifyEmail
 }

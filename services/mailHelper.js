@@ -13,13 +13,15 @@ const mailHelper = async (option ) =>  {
 
    try {
     
-       await transporter.sendMail(message)
+      var responce =  await transporter.sendMail(message)
    } catch (error) {
     console.log(error);
 
         throw new CustomError( error , 401 , "mailHelper line 18")
    }
 
+
+   return responce
 
 
 }

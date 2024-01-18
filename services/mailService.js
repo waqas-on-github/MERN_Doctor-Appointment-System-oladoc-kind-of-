@@ -1,15 +1,12 @@
   import nodemailer from "nodemailer" 
 
-  
-  
-  let transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    secure: false, // true for 465, false for other ports
+  var transporter = nodemailer.createTransport({
+    host: "smtp.mailmug.net",
+    port: 2525,
     auth: {
-      user: "example@brevo.com", // generated ethereal user
-      pass: "xxxxxxxxx", // generated ethereal password
-    },
+      user: "xmvparbxbwj3c4ga",
+      pass: "verszreqjpahvpae"
+    }
   });
   
     export {

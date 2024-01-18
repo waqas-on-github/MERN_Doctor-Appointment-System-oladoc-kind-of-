@@ -4,7 +4,8 @@ import Prisma from "../../prisma.js";
 import { appointmentRequestSchema } from "../../validationSchema/appointment.schema.js";
 import { sanitizeData } from "../userControler/createAccount.js";
 import { getDoctor } from "../../helpers/getDoctor.js"
-import { getOnePatientById } from "./getAppointmentInfo.js";
+import { getOneUser } from "../../helpers/getProfile.js";
+import { mailHelper } from "../../services/mailHelper.js";
 
 /*
 ...................APPLICATION LOGIC SENARIOS............
@@ -46,6 +47,7 @@ import { getOnePatientById } from "./getAppointmentInfo.js";
 .........................NOTIFICATION SENARIOS ....................
 
 when appointment requested by user succeed. doctor will get email
+
 then if  appointment will be accepted"SCHEDULED"  by doctor patient should alos get email notification
      ---> if canceled then patient should also be notified/emailed or get sms/whatsapp sms 
 
@@ -92,16 +94,24 @@ const sendAppointmentRequets = asyncHandler(async (req, res) => {
       401,
       "line 80 sedappointrequest"
     );
-  // TODO send email/sms to doctor /clinic admin  for appointment request by some patient 
-
-  // send responce back
-
+    
+    
+    // get doctor email address  
+    const doctor = await getDoctor(sanitizedData.doctorId)
+    const user  =  await getOneUser(doctor.userId) 
+    
+    // TODO send email/sms to doctor /clinic admin  for appointment request by some patient
+    await sendAppointmentRequestEmail(user.email)
+    // send responce back
   res.status(201).json({
     success: true,
     message: "appoint requested",
     timeStemp: timeStempUpdaetResult,
   });
 });
+
+
+
 
 const updaetTimeStemps = async (timeStempId, data) => {
   try {
@@ -126,5 +136,29 @@ const getOneTimeStemp = async (options) => {
   }
   return dbResp;
 };
+
+
+const sendAppointmentRequestEmail = async (doctorEmail) => {
+
+ //TODO will be more strucured and detailed later
+ 
+  const message = `request for new bookeing confirm this by checking you admin dashboard`
+
+  try {
+    var mailResponce = await mailHelper({
+      email: doctorEmail,
+      subject: "Appointment verification Request ",
+      text: message
+    })
+  } 
+  
+  catch (error) {
+    throw new CustomError(error || "Email could not be sent", 500, error.stack)
+  }
+
+  return mailResponce
+
+}
+
 
 export { sendAppointmentRequets, getOneTimeStemp, updaetTimeStemps };

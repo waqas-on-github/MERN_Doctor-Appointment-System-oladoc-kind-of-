@@ -7,6 +7,10 @@ import { getOneTimeStemp } from "./sendAppointmentRequest.js";
 import { updaetTimeStemps } from "./sendAppointmentRequest.js";
 import {appointementStatusConstents }from '../../utils/constents.js'
 import { getDoctor } from "../../helpers/getDoctor.js";
+import { getPatient } from "../../helpers/getPatient.js";
+import { getOneUser } from "../userControler/getProfile.js";
+import { mailHelper } from "../../services/mailHelper.js";
+
 /*
 ...REQUIREMENTS TO SEND APPIONTMENT REQUEST 
  ... patientId 
@@ -73,7 +77,7 @@ const acceptAppointmentRequest = asyncHandler(async (req, res) => {
      doctorId             : sanitizedData.doctorId,
      patientId            : sanitizedData.patientId,
      doseDoctorAccepted   : true,
-     status               : appointementStatusConstents.SCHEDULED,  
+     statusByDoctor       : appointementStatusConstents.SCHEDULED,  
      checkinTime          : timeStempUpdaetResult.startTime,
      checkoutTime         : timeStempUpdaetResult.endTime 
      
@@ -81,8 +85,17 @@ const acceptAppointmentRequest = asyncHandler(async (req, res) => {
 
    
      if(!dbResponce) throw new CustomError("failed to create insert appoint record in db" , 401 , "line 80 accepetappointment controler")
+  
+
+    // get patient email address and send it to user 
+
+    const patient = await  getPatient(sanitizedData.patientId) 
+    const user =    await     getOneUser(parseInt(patient.userId))
 
     //TODO send email /sms to patient about that his appointment is secudeled for this doctor 
+
+    await sendAppointmentAcceptEmail(user.email)
+
 
      res.status(201).json({
       success : true , 
@@ -120,6 +133,32 @@ const addAppointmentRecordInDb = async(data) => {
 
      return dbResponce
 }
+
+
+
+
+const sendAppointmentAcceptEmail = async (patientEmail) => {
+
+  //TODO will be more strucured and detailed later
+  
+   const message = `your appointment request with doctor is accepted`
+ 
+   try {
+     var mailResponce = await mailHelper({
+       email: patientEmail,
+       subject: "Appointment  Request acceptance ",
+       text: message
+     })
+   } 
+   
+   catch (error) {
+     throw new CustomError(error || "Email could not be sent", 500, error.stack)
+   }
+ 
+   return mailResponce
+ 
+ }
+ 
 
 
 export { 

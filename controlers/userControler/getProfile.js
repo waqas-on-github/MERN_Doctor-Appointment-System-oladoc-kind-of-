@@ -1,6 +1,9 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import CustomError from "../../utils/CustomError.js";
 import {getOneUser} from '../../helpers/getProfile.js'
+
+
+
 const getProfile = asyncHandler(async(req, res ) => {
 
   const userId = req?.user?.id ||  req.params.id 

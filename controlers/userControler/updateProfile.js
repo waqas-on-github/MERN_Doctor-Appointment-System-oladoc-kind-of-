@@ -37,8 +37,6 @@ const updateProfile = asyncHandler(async(req, res) => {
       updated : updated
    })
 
-
-
 })
 
 // check user existance 
@@ -63,6 +61,8 @@ const  checkUserExistsById = async(userId) => {
 
 // update user profile by id 
 const updateProfileById = async(data , pass, userId ) => {
+
+   
   console.log({...data , password: pass });
 
    try {
